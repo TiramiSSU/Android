@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "617424982034",
+    "firebase_url": "https://ssuapp-4f158.firebaseio.com",
+    "project_id": "ssuapp-4f158",
+    "storage_bucket": "ssuapp-4f158.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:617424982034:android:140b1422aaadf1fbcd48cb",
+        "android_client_info": {
+          "package_name": "com.example.ssuapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "617424982034-k4duiqchcrrug05s1c3rkum3gamvn96s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ssuapp",
+            "certificate_hash": "be3e4ad7ff531c2225d16d8491dd2040d6c1e36e"
+          }
+        },
+        {
+          "client_id": "617424982034-012o4n2g9k18eem18m2dbmbqrvcqutqa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEqEdeDHFDArgMfhiBKeKfMjg00oL0PNo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "617424982034-012o4n2g9k18eem18m2dbmbqrvcqutqa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

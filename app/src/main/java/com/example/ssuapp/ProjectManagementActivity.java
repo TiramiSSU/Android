@@ -20,6 +20,7 @@ public class ProjectManagementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_management);
 
+        //파이어스토어 PatraSSU collection에서 필드값 빼오기
         db.collection("PatraSSU")
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

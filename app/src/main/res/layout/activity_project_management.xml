@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/projectManagementLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,9 +12,10 @@
     <!--    전체 목표 레이아웃-->
     <HorizontalScrollView
         android:id="@+id/totalAimHorizenScroll"
-        android:layout_marginTop="100dp"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="200dp"
+        android:layout_marginTop="100dp"
+        android:background="@color/colorPrimary">
 
         <LinearLayout
             android:id="@+id/totalAimLinearLayout"
@@ -29,14 +31,16 @@
     <!--    개인 목표 레이아웃-->
     <HorizontalScrollView
         android:id="@+id/detailAimHorizenScroll"
+        android:layout_below="@id/totalAimHorizenScroll"
         android:layout_marginTop="100dp"
-        android:paddingLeft="150dp"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="200dp"
+        android:background="@color/colorPrimaryDark">
 
         <LinearLayout
             android:id="@+id/detailAimLinearLayout"
             android:orientation="horizontal"
+            android:paddingLeft="150dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </LinearLayout>
@@ -46,11 +50,13 @@
 
     <!--    참고자료 레이아웃-->
     <Button
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center_horizontal"
+        android:id="@+id/btn_PMreference"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/detailAimHorizenScroll"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="165dp"
         android:text="참고자료">
     </Button>
     <!--    참고자료 레이아웃-->
-</LinearLayout>
+</RelativeLayout>

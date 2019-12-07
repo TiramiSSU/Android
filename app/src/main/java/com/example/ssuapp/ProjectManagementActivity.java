@@ -1,24 +1,113 @@
 package com.example.ssuapp;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProjectManagementActivity extends AppCompatActivity {
 
+    final String userid = "iw2swiambfs";
+    FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
+    AlertDialog myProjectDeleteDialog;  //프로젝트 삭제 다이얼로그
+    String projectName;
+
+
     @Override
-    protected void onCreate(Bundle saveInstanceState){
+    protected void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_project_management);
 
+        //Intent 로 프로젝트 이름 받아오기
         Intent intent = getIntent();
+        projectName = intent.getExtras().getString("ProjectName");
+        Log.d("jinwoo/", "받은 이름: " + projectName);
 
-        String projectName = intent.getExtras().getString("ProjectName");
+        db.collection(projectName).document("Progress");
 
-        Log.d("jinwoo/","받은 이름: "+projectName);
     }
+
+    public void onClickProjectDelete(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setIcon(R.drawable.icon_warning);
+        builder.setTitle("경고");
+        builder.setMessage("정말 삭제 하시겠습니까?");
+        //확인버튼 취소버튼 아이콘 확인해보기
+        builder.setPositiveButton("삭제", dialogListener);
+        builder.setNegativeButton("취소", null);
+        myProjectDeleteDialog = builder.create();
+        myProjectDeleteDialog.show();
+    }
+
+    public void onClickJoinedPeople(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("참여자");
+    }
+
+    //프로젝트 삭제에서 삭제 했을때 부를 리스너
+    //여기서 DB값도 같이 삭제함
+    DialogInterface.OnClickListener dialogListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (dialog == myProjectDeleteDialog) {
+                Log.d("jinwoo/", projectName + "프로젝트 삭제버튼 클릭");
+                DocumentReference docRef = db.collection("UserID").document(userid);
+                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        int cnt;
+                        String projectlist;
+                        String[] eachProject;
+                        DBUserInformation userInfo = documentSnapshot.toObject(DBUserInformation.class);
+                        cnt = userInfo.getProjectcnt();
+                        //삭제할 프로젝트가 없을때 예외처리
+                        if (cnt == 0) {
+                            Log.d("jinwoo/", "프로젝트 0개일때 삭제");
+                        }
+                        //삭제할 프로젝트가 1개일때
+                        else if (cnt == 1) {
+                            //projectcnt 감소
+                            cnt--;
+                            userInfo.setProjectcnt(cnt);
+                            projectlist = "";
+                            userInfo.setProjectlist(projectlist);
+                            db.collection("UserID").document(userid).set(userInfo);
+                            Log.d("jinwoo/", "프로젝트 1개일때 삭제");
+                        }
+                        //그외의 경우
+                        else {
+                            //구분자를 활용하여 '/'  String 을 사용 관리하여 가지고있는 프로젝트 리스트 관리
+                            cnt--;
+                            userInfo.setProjectcnt(cnt);
+                            eachProject = documentSnapshot.getString("projectlist").split("/");
+                            List<String> list = new ArrayList<>(Arrays.asList(eachProject));
+                            list.remove(projectName);
+                            projectlist = list.stream().collect(Collectors.joining("/"));
+                            userInfo.setProjectlist(projectlist);
+                            db.collection("UserID").document(userid).set(userInfo);
+                            Log.d("jinwoo/", "프로젝트 2개이상일때 삭제");
+                        }
+                    }
+                });
+                finish();   //삭제후 종료
+            }
+        }
+    };
 //
 //    FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
 //    Button[] totalBtnAry;   //전체목표 버튼

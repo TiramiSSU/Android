@@ -47,12 +47,18 @@ public class ProjectListAddActivity extends AppCompatActivity {
             Toast myToast = Toast.makeText(this.getApplicationContext(),"프로젝트 이름을 입력해주세요",Toast.LENGTH_SHORT);
             myToast.show();
         }
+        else if(projectName.contains("/")){
+            Log.d("jinwoo/","프로젝트 이름에 '/' 가 존재합니다.");
+            Toast myToast = Toast.makeText(this.getApplicationContext(),"/  은 사용 불가능한 문자입니다.",Toast.LENGTH_SHORT);
+            myToast.show();
+        }
         //프로젝트 이름 입력이 되어있을때
         //데이터 베이스에 추가해줌
         else{
             Log.d("jinwoo/","프로젝트 이름 ="+projectName);
-            //DB에 새 컬렉션 만들기
-            Map<String, String> myUId = new HashMap<>();
+
+            //DB에 projectName을 가진 새 컬렉션 만들기
+            Map<String, Object> myUId = new HashMap<>();
             myUId.put(userid,"박진우");
             db.collection(projectName).document("Progress")
                     .set(myUId)
@@ -75,7 +81,7 @@ public class ProjectListAddActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     int cnt;
-                    String name, projectlist;
+                    String projectlist;
                     DBUserInformation userInfo = documentSnapshot.toObject(DBUserInformation.class);
                     //기존 프로젝트가 0개일때
                     if(userInfo.getProjectcnt() == 0){
@@ -84,7 +90,10 @@ public class ProjectListAddActivity extends AppCompatActivity {
                         projectlist = projectName;
                         userInfo.setProjectcnt(cnt);
                         userInfo.setProjectlist(projectlist);
+                        //이부분은 나중에 각자의 이름으로 바꿔야하나 지금은 개인으로 사용중
+                        userInfo.setName("박진우");
                         Log.d("jinwoo/","DB에 추가할 내용 cnt"+userInfo.getProjectcnt()+ "리스트"+userInfo.getProjectlist());
+                        db.collection("UserID").document(userid).set(userInfo);
                     }
                     //추가할게 1개이상일 때
                     else{
@@ -94,13 +103,14 @@ public class ProjectListAddActivity extends AppCompatActivity {
                         projectlist = projectlist.concat("/"+projectName);
                         userInfo.setProjectcnt(cnt);
                         userInfo.setProjectlist(projectlist);
+                        userInfo.setName("박진우");
                         Log.d("jinwoo/","DB에 추가할 내용 cnt"+userInfo.getProjectcnt()+ "리스트"+userInfo.getProjectlist());
                         db.collection("UserID").document(userid).set(userInfo);
                     }
                 }
             });
+            finish();
         }
-        finish();
     }
     //취소버튼 클릭
     public void onClickCancle(View view){

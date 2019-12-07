@@ -6,15 +6,32 @@
     android:id="@+id/projectManagementLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ProjectManagementActivity">
 
+    <Button
+        android:id="@+id/ProjectJoinedPeopleBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:text="참여자"
+        android:onClick="onClickJoinedPeople"/>
+    <Button
+        android:id="@+id/ProjectDeleteBtn"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="프로젝트 삭제"
+        android:onClick="onClickProjectDelete"/>
     <!--    전체 목표 레이아웃-->
     <HorizontalScrollView
         android:id="@+id/totalAimHorizenScroll"
+        android:layout_below="@+id/ProjectDeleteBtn"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="60dp"
         android:background="@color/colorPrimary">
 
         <LinearLayout
@@ -55,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/detailAimHorizenScroll"
         android:layout_marginTop="50dp"
-        android:layout_marginLeft="165dp"
+        android:layout_centerHorizontal="true"
         android:text="참고자료">
     </Button>
     <!--    참고자료 레이아웃-->

@@ -12,8 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="70dp"
-        android:background="@color/colorPrimary">
+        android:layout_marginBottom="70dp">
 
 <!--        버튼은 모두 동적으로 배당-->
         <LinearLayout

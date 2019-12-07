@@ -34,6 +34,7 @@ public class ProjectListActivity extends AppCompatActivity {
     protected void onResume() {
 //프로젝트 리스트 출력부분
         //각 기기의 고유값으로 userID생성후 접근 but 지금은 정적으로 접근
+        final ViewGroup.LayoutParams btnParams = new ViewGroup.LayoutParams(400, ViewGroup.LayoutParams.MATCH_PARENT);
 
         DocumentReference docRef = db.collection("UserID").document(userid);
         docRef.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<DocumentSnapshot>() {
@@ -56,7 +57,6 @@ public class ProjectListActivity extends AppCompatActivity {
 
                     String projectlist = documentSnapshot.getString("projectlist");
                     int slashcnt = documentSnapshot.getLong("projectcnt").intValue();
-                    ViewGroup.LayoutParams btnParams = new ViewGroup.LayoutParams(400, ViewGroup.LayoutParams.MATCH_PARENT);
 
                     //참여중인 프로젝트가 1개일때
                     if (slashcnt == 1) {
@@ -67,7 +67,7 @@ public class ProjectListActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
                                 Intent intent = new Intent(getApplicationContext(), ProjectManagementActivity.class);
-                                intent.putExtra("ProjectName",joinProjectBtn.getText().toString());
+                                intent.putExtra("ProjectName", joinProjectBtn.getText().toString());
                                 startActivity(intent);
                             }
                         });
@@ -87,27 +87,26 @@ public class ProjectListActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View view) {
                                     Intent intent = new Intent(getApplicationContext(), ProjectManagementActivity.class);
-                                    intent.putExtra("ProjectName",tempStr);
+                                    intent.putExtra("ProjectName", tempStr);
                                     startActivity(intent);
                                 }
                             });
                             projectListLayout.addView(joinedProjectBtn[i], btnParams);
                         }
                     }
-
-                    //추가하는 버튼은 항상 추가
-                    Button addProjectBtn = new Button(getBaseContext());
-                    addProjectBtn.setId(View.generateViewId());
-                    addProjectBtn.setText("프로젝트를 추가해주세요");
-                    addProjectBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(getApplicationContext(), ProjectListAddActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-                    projectListLayout.addView(addProjectBtn, btnParams);
                 }
+                //추가하는 버튼은 항상 추가
+                Button addProjectBtn = new Button(getBaseContext());
+                addProjectBtn.setId(View.generateViewId());
+                addProjectBtn.setText("프로젝트를 추가해주세요");
+                addProjectBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getApplicationContext(), ProjectListAddActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                projectListLayout.addView(addProjectBtn, btnParams);
             }
         });
         //각 팀에 속해있는지 판단후 팀이 없다면 추가를 있다면 리스트도 포함하여 출력

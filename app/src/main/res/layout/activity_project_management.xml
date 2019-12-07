@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/projectManagementLayout"
@@ -8,72 +7,73 @@
     android:layout_height="match_parent"
     tools:context=".ProjectManagementActivity">
 
-    <Button
-        android:id="@+id/ProjectJoinedPeopleBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        android:text="참여자"
-        android:onClick="onClickJoinedPeople"/>
-    <Button
-        android:id="@+id/ProjectDeleteBtn"
-        android:layout_alignParentEnd="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="프로젝트 삭제"
-        android:onClick="onClickProjectDelete"/>
-    <!--    전체 목표 레이아웃-->
-    <HorizontalScrollView
-        android:id="@+id/totalAimHorizenScroll"
-        android:layout_below="@+id/ProjectDeleteBtn"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="60dp"
-        android:background="@color/colorPrimary">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/totalAimLinearLayout"
-            android:orientation="horizontal"
-            android:paddingLeft="150dp"
+        <Button
+            android:id="@+id/ProjectJoinedPeopleSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:onClick="onClickJoinedPeople"
+            android:text="참여자" />
+
+        <Button
+            android:id="@+id/ProjectDeleteBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:onClick="onClickProjectDelete"
+            android:text="프로젝트 삭제" />
+        <!--    전체 목표 레이아웃-->
+        <HorizontalScrollView
+            android:id="@+id/totalAimHorizenScroll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </LinearLayout>
+            android:layout_height="320dp"
+            android:layout_below="@+id/ProjectDeleteBtn"
+            android:layout_marginTop="60dp">
 
-    </HorizontalScrollView>
-    <!--    전체 목표 레이아웃-->
+            <LinearLayout
+                android:id="@+id/totalAimLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="10dp"></LinearLayout>
 
-    <!--    개인 목표 레이아웃-->
-    <HorizontalScrollView
-        android:id="@+id/detailAimHorizenScroll"
-        android:layout_below="@id/totalAimHorizenScroll"
-        android:layout_marginTop="100dp"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/colorPrimaryDark">
+        </HorizontalScrollView>
+        <!--    전체 목표 레이아웃-->
 
-        <LinearLayout
-            android:id="@+id/detailAimLinearLayout"
-            android:orientation="horizontal"
-            android:paddingLeft="150dp"
+        <!--    개인 목표 레이아웃-->
+        <HorizontalScrollView
+            android:id="@+id/detailAimHorizenScroll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </LinearLayout>
+            android:layout_height="320dp"
+            android:layout_below="@id/totalAimHorizenScroll"
+            android:layout_marginTop="100dp">
 
-    </HorizontalScrollView>
-    <!--    개인 목표 레이아웃-->
+            <LinearLayout
+                android:id="@+id/detailAimLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="10dp"></LinearLayout>
 
-    <!--    참고자료 레이아웃-->
-    <Button
-        android:id="@+id/btn_PMreference"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/detailAimHorizenScroll"
-        android:layout_marginTop="50dp"
-        android:layout_centerHorizontal="true"
-        android:text="참고자료">
-    </Button>
-    <!--    참고자료 레이아웃-->
-</RelativeLayout>
+        </HorizontalScrollView>
+        <!--    개인 목표 레이아웃-->
+
+        <!--    참고자료 레이아웃-->
+        <Button
+            android:id="@+id/btn_PMreference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detailAimHorizenScroll"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:text="참고자료"></Button>
+        <!--    참고자료 레이아웃-->
+    </RelativeLayout>
+</ScrollView>

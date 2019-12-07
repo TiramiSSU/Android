@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="300dp"
+    android:background="#F01E90FF"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/titleMenuBar"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:background="#801E90FF"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/totalTodoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전체 진행 목표를 적을 공간"
+                android:textStyle="bold" />
+            <!--    삭제버튼-->
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#F01E90FF"
+                android:layout_alignParentEnd="true"
+                android:padding="10dp"
+                android:src="@drawable/icon_delete_jw" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/detail_1_TodoText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="- 들어갈내용1" />
+
+            <TextView
+                android:id="@+id/detail_2_TodoText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="- 들어갈내용2" />
+
+            <TextView
+                android:id="@+id/detail_3_TodoText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="- 들어갈내용3" />
+        </LinearLayout>
+    </LinearLayout>
+    <!--세부사항-->
+
+</RelativeLayout>

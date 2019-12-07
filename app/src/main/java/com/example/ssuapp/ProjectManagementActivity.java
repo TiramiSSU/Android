@@ -3,11 +3,14 @@ package com.example.ssuapp;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -42,6 +45,7 @@ public class ProjectManagementActivity extends AppCompatActivity {
 
     }
 
+    //프로젝트 삭제 및 참여자 버튼은 툴바에 바꿀것
     public void onClickProjectDelete(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setIcon(R.drawable.icon_warning);
@@ -57,6 +61,8 @@ public class ProjectManagementActivity extends AppCompatActivity {
     public void onClickJoinedPeople(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("참여자");
+        myProjectDeleteDialog = builder.create();
+        myProjectDeleteDialog.show();
     }
 
     //프로젝트 삭제에서 삭제 했을때 부를 리스너
@@ -108,6 +114,24 @@ public class ProjectManagementActivity extends AppCompatActivity {
             }
         }
     };
+
+    //유동적으로 동적 뷰 관리
+    @Override
+    public void onResume(){
+        LinearLayout totalAimLayout = findViewById(R.id.totalAimLinearLayout);
+        totalAimLayout.removeAllViews();
+
+        //커스텀뷰 관리
+        TodoListView todoListView = new TodoListView(getApplicationContext());
+        todoListView.setTotalTodoText("이것이 들어간다면 성공입니다");
+        totalAimLayout.addView(todoListView);
+        TodoListView todoListView_2 = new TodoListView(getApplicationContext());
+        todoListView_2.setTotalTodoText("이것도 넣어야징~");
+        todoListView_2.setPadding(20,0,0,0);
+        totalAimLayout.addView(todoListView_2);
+
+        super.onResume();
+    }
 //
 //    FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
 //    Button[] totalBtnAry;   //전체목표 버튼

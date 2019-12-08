@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="400dp"
+    android:layout_width="350dp"
     android:layout_height="300dp"
     android:background="#F01E90FF"
     android:orientation="vertical"
@@ -19,20 +19,79 @@
             android:background="#801E90FF"
             android:orientation="horizontal">
 
+            <!--            TextView - EditText 전환을 하기위해 visibility 속성 사용-->
             <TextView
-                android:id="@+id/totalTodoText"
+                android:id="@+id/totalTodoTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="전체 진행 목표를 적을 공간"
-                android:textStyle="bold" />
-            <!--    삭제버튼-->
+                android:text="Add all member Goal"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+            <EditText
+                android:id="@+id/totalTodoEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:lines="1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <!--            각 버튼들 보이는것을 위해 visibility 속성사용-->
+            <!--            편집버튼을 눌렀을때 확인버튼-->
             <ImageButton
+                android:id="@+id/todoEditCheckBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="#F01E90FF"
                 android:layout_alignParentEnd="true"
+                android:background="#F01E90FF"
                 android:padding="10dp"
-                android:src="@drawable/icon_delete_jw" />
+                android:src="@drawable/icon_check_jw"
+                android:visibility="gone" />
+            <!--    편집버튼을 눌렀을때 취소버튼-->
+            <ImageButton
+                android:id="@+id/todoEditCancleBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignWithParentIfMissing="true"
+                android:layout_toStartOf="@id/todoEditCheckBtn"
+                android:background="#F01E90FF"
+                android:padding="10dp"
+                android:src="@drawable/icon_cancle_jw" />
+            <!--            추가버튼-->
+            <ImageButton
+                android:id="@+id/todoAddBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:background="#F01E90FF"
+                android:padding="10dp"
+                android:src="@drawable/icon_add_jw"
+                android:visibility="visible"
+                android:onClick="onClickAddTodolist"/>
+            <!--    편집버튼-->
+            <ImageButton
+                android:id="@+id/todoEditBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignWithParentIfMissing="true"
+                android:layout_toStartOf="@id/todoDeleteBtn"
+                android:background="#F01E90FF"
+                android:padding="10dp"
+                android:src="@drawable/icon_edit_jw"
+                android:visibility="gone"/>
+            <!--    삭제버튼-->
+            <ImageButton
+                android:id="@+id/todoDeleteBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:background="#F01E90FF"
+                android:padding="10dp"
+                android:src="@drawable/icon_delete_jw"
+                android:visibility="gone"/>
 
         </RelativeLayout>
 
@@ -42,25 +101,64 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/detail_1_TodoText"
+                android:id="@+id/detail_1_TodoTextView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="- 들어갈내용1" />
+                android:textSize="14sp"
+                android:text="- 세부사항1"
+                android:visibility="visible" />
+
+            <EditText
+                android:id="@+id/detail_1_TodoEditText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:lines="1"
+                android:textSize="14sp"
+                android:text="- 편집 세부사항1"
+                android:visibility="gone" />
 
             <TextView
-                android:id="@+id/detail_2_TodoText"
+                android:id="@+id/detail_2_TodoTextView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="- 들어갈내용2" />
+                android:textSize="14sp"
+                android:text="- 세부사항2"
+                android:visibility="visible" />
+
+            <EditText
+                android:id="@+id/detail_2_TodoEditText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:lines="1"
+                android:textSize="14sp"
+                android:text="- 편집 세부사항2"
+                android:visibility="gone" />
 
             <TextView
-                android:id="@+id/detail_3_TodoText"
+                android:id="@+id/detail_3_TodoTextView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="- 들어갈내용3" />
+                android:textSize="14sp"
+                android:text="- 세부사항3"
+                android:visibility="visible" />
+
+            <EditText
+                android:id="@+id/detail_3_TodoEditText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:lines="1"
+                android:textSize="14sp"
+                android:text="- 편집 세부사항3"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
     <!--세부사항-->

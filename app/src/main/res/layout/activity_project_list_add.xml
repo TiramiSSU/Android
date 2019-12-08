@@ -24,6 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="생성할 프로젝트 이름을 입력해주세요"
+            android:singleLine="true"
+            android:lines="1"
             android:textSize="15sp"/>
     </LinearLayout>
 

@@ -122,13 +122,10 @@ public class ProjectManagementActivity extends AppCompatActivity {
         totalAimLayout.removeAllViews();
 
         //커스텀뷰 관리
+        //기본으로 들어가는 전체 진행도 추가
         TodoListView todoListView = new TodoListView(getApplicationContext());
-        todoListView.setTotalTodoText("이것이 들어간다면 성공입니다");
+        todoListView.changeMode("add");
         totalAimLayout.addView(todoListView);
-        TodoListView todoListView_2 = new TodoListView(getApplicationContext());
-        todoListView_2.setTotalTodoText("이것도 넣어야징~");
-        todoListView_2.setPadding(20,0,0,0);
-        totalAimLayout.addView(todoListView_2);
 
         super.onResume();
     }

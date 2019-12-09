@@ -17,11 +17,10 @@ import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GithubAuthProvider;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.auth.UserInfo;
 
 public class SignedInActivity extends AppCompatActivity implements View.OnClickListener{    //Google 인증을 위한 액티비티
@@ -154,17 +153,13 @@ public class SignedInActivity extends AppCompatActivity implements View.OnClickL
                 {
                     providerList.append("Google");
                 }
-                else if (FacebookAuthProvider.PROVIDER_ID.equals(providerId))
-                {
-                    providerList.append("Facebook");
-                }
-                else if(TwitterAuthProvider.PROVIDER_ID.equals(providerId))
-                {
-                    providerList.append("Twitter");
-                }
                 else if (EmailAuthProvider.PROVIDER_ID.equals(providerId))
                 {
                     providerList.append("Email");
+                }
+                else if (GithubAuthProvider.PROVIDER_ID.equals(providerId))
+                {
+                    providerList.append("Github");
                 }
                 else
                 {

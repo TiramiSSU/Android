@@ -8,6 +8,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ssuapp.authentication.AuthActivity;
+import com.example.ssuapp.authentication.FirebaseUIActivity;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
@@ -23,13 +24,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View view){
-        switch(view.getId()){
+        switch (view.getId()) {
             case R.id.firebaseauthbtn:
                 Intent i = new Intent(this, AuthActivity.class);
                 startActivity(i);
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
 }

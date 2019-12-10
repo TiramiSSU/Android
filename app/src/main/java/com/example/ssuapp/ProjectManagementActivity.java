@@ -1,23 +1,26 @@
 package com.example.ssuapp;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +31,7 @@ public class ProjectManagementActivity extends AppCompatActivity {
     final String userid = "iw2swiambfs";
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
     AlertDialog myProjectDeleteDialog;  //프로젝트 삭제 다이얼로그
+    AlertDialog myProjectJoinedPeopleDialog; //프로젝트 참여자 다이얼로그
     String projectName;
 
 
@@ -49,7 +53,7 @@ public class ProjectManagementActivity extends AppCompatActivity {
     public void onClickProjectDelete(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setIcon(R.drawable.icon_warning);
-        builder.setTitle("경고");
+        builder.setTitle("경고: 프로젝트 삭제");
         builder.setMessage("정말 삭제 하시겠습니까?");
         //확인버튼 취소버튼 아이콘 확인해보기
         builder.setPositiveButton("삭제", dialogListener);
@@ -61,15 +65,15 @@ public class ProjectManagementActivity extends AppCompatActivity {
     public void onClickJoinedPeople(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("참여자");
-        myProjectDeleteDialog = builder.create();
-        myProjectDeleteDialog.show();
+        myProjectJoinedPeopleDialog = builder.create();
+        myProjectJoinedPeopleDialog.show();
     }
 
-    //프로젝트 삭제에서 삭제 했을때 부를 리스너
-    //여기서 DB값도 같이 삭제함
+    //다이얼로그 리스너
     DialogInterface.OnClickListener dialogListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
+            //프로젝트 삭제 다이얼로그
             if (dialog == myProjectDeleteDialog) {
                 Log.d("jinwoo/", projectName + "프로젝트 삭제버튼 클릭");
                 DocumentReference docRef = db.collection("UserID").document(userid);
@@ -112,165 +116,150 @@ public class ProjectManagementActivity extends AppCompatActivity {
                 });
                 finish();   //삭제후 종료
             }
+            //참여자 다이얼로그
+            else if (dialog == myProjectJoinedPeopleDialog) {
+
+            }
         }
     };
 
     //유동적으로 동적 뷰 관리
     @Override
-    public void onResume(){
-        LinearLayout totalAimLayout = findViewById(R.id.totalAimLinearLayout);
-        totalAimLayout.removeAllViews();
+    public void onResume() {
 
-        //커스텀뷰 관리
-        //기본으로 들어가는 전체 진행도 추가
-        TodoListView todoListView = new TodoListView(getApplicationContext());
-        todoListView.changeMode("add");
-        totalAimLayout.addView(todoListView);
+        final LinearLayout totalAimLayout = findViewById(R.id.totalAimLinearLayout);
+
+        DocumentReference docRef = db.collection(projectName).document("Progress").collection("TotalProgress").document("TotalList");
+
+        docRef.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                //전체 진행도 관리부분
+                //데이터가 바뀔 때 마다 새로 그리기 위해 지움
+                totalAimLayout.removeAllViews();
+
+                final DBTodoList myTodoList = documentSnapshot.toObject(DBTodoList.class);
+
+                //진행도 Custom View로 그리기
+                int cnt = myTodoList.getCnt();
+                if (cnt > 0) {
+                    String arr[] = myTodoList.getCountedStr().split("/");
+                    final ArrayList<String> list = new ArrayList<String>(Arrays.asList(arr));
+                    final TodoListView[] myTodoListView = new TodoListView[cnt];
+                    TodoListView.LayoutParams myParams = new TodoListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    myParams.setMarginEnd(20);
+                    for (int i = 0; i < cnt; i++) {
+                        myTodoListView[i] = new TodoListView(getApplicationContext());
+                        myTodoListView[i].changeMode("view");
+                        myTodoListView[i].setTotalTodoText(arr[i]);
+                        //편집부분 클릭이벤트 DB에 반영
+                        myTodoListView[i].todoEditCheckBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String saveed_String, saving_String;
+                                TodoListView tempTodoListView = (TodoListView) view.getParent().getParent().getParent().getParent();
+                                saveed_String = tempTodoListView.getTotalTodoText();
+                                tempTodoListView.button_clicked("editCheck");
+                                saving_String = tempTodoListView.getTotalTodoText();
+                                for (int i = 0; i < list.size(); i++) {
+                                    if (list.get(i).equals(saveed_String)) {
+                                        list.set(i, saving_String);
+                                    }
+                                }
+                                String temp = list.stream().collect(Collectors.joining("/"));
+                                myTodoList.setCountedStr(temp);
+                                db.collection(projectName).document("Progress").
+                                        collection("TotalProgress").document("TotalList").
+                                        set(myTodoList);
+                            }
+                        });
+                        //삭제부분 클릭이벤트 DB에 반영 다이얼로그 띄운뒤 확인이 들어왔을때
+                        myTodoListView[i].todoDeleteBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                TodoListView tempTodoListView = (TodoListView) view.getParent().getParent().getParent().getParent();
+                                final int tempCnt = myTodoList.getCnt();
+                                final String deleteString = tempTodoListView.getTotalTodoText();
+
+                                //다이얼로그 확인부분
+                                AlertDialog.Builder builder = new AlertDialog.Builder(ProjectManagementActivity.this);
+                                builder.setTitle("경고: 정말 삭제하시겠습니까?");
+                                builder.setMessage("삭제할 내용 : " + deleteString);
+
+                                //확인버튼 취소버튼 아이콘 확인해보기
+                                builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int which) {
+                                        int tmp = tempCnt;
+                                        for (int i = 0; i < list.size(); i++) {
+                                            if (list.get(i).equals(deleteString)) {
+                                                list.remove(deleteString);
+                                            }
+                                        }
+                                        String temp = list.stream().collect(Collectors.joining("/"));
+                                        myTodoList.setCountedStr(temp);
+                                        tmp--;
+                                        myTodoList.setCnt(tmp);
+                                        db.collection(projectName).document("Progress").
+                                                collection("TotalProgress").document("TotalList").
+                                                set(myTodoList);
+                                    }
+                                });
+                                builder.setNegativeButton("취소", null);
+                                builder.show();
+
+                            }
+                        });
+                        totalAimLayout.addView(myTodoListView[i], myParams);
+                    }
+                }
+
+                //전체 진행도 추가부분 DB에 반영
+                final TodoListView addTodoListView = new TodoListView(getApplicationContext());
+                addTodoListView.changeMode("add");
+                addTodoListView.todoAddBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //진행도 추가부분 Title 이 입력이 안되었을때
+                        if (addTodoListView.validTotalTodo()) {
+                            Log.d("jinwoo/", "입력이 없음");
+                            Toast toast = Toast.makeText(getApplicationContext(), "추가할 목표의 Title을 입력해 주세요.", Toast.LENGTH_SHORT);
+                            toast.show();
+                        } else {
+                            int tempCnt = myTodoList.getCnt();
+                            String tempString = myTodoList.getCountedStr();
+
+                            //커스텀뷰의 버튼, TextVIew - EditText 전환
+                            addTodoListView.button_clicked("add");
+
+                            //추가하는 데이터 넣어주기
+                            //추가전 목표개수가 0개
+                            if (tempCnt == 0) {
+                                tempCnt++;
+                                myTodoList.setCnt(tempCnt);
+                                tempString = addTodoListView.getTotalTodoText().trim();
+                                myTodoList.setCountedStr(tempString);
+                                db.collection(projectName).document("Progress").
+                                        collection("TotalProgress").document("TotalList").
+                                        set(myTodoList);
+                            }
+                            //추가전 목표개수가 1개이상
+                            else {
+                                tempCnt++;
+                                myTodoList.setCnt(tempCnt);
+                                tempString = tempString.concat("/" + addTodoListView.getTotalTodoText()).trim();
+                                myTodoList.setCountedStr(tempString);
+                                db.collection(projectName).document("Progress").
+                                        collection("TotalProgress").document("TotalList").
+                                        set(myTodoList);
+                            }
+                        }
+                    }
+                });
+                totalAimLayout.addView(addTodoListView);
+            }
+        });
 
         super.onResume();
     }
-//
-//    FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
-//    Button[] totalBtnAry;   //전체목표 버튼
-//    int[] totalBtnId;       //전체목표 버튼ID 저장
-//    int total0btnId;          //전체목표0 버튼ID저장
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_project_management);
-//        final String TAG_JW = getString(R.string.TAG_JW);
-////        //전체 진행도 관리
-////        Log.d(TAG_JW, "프로젝트 진행도 관리 액티비티 실행");
-////        DocumentReference docRef = db.
-////                collection("PatraSSU").
-////                document("TeamJw").
-////                collection("ProjectManagement").
-////                document("TotalAim");
-////        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-////            @Override
-////            public void onSuccess(DocumentSnapshot documentSnapshot) {
-////                Log.d(TAG_JW+"project_management", "프로젝트 진행도 db에서 받아오기");
-////                //값 설정
-////                int totalAimcnt = toIntExact(documentSnapshot.getLong("Aimcnt"));
-////                String index, totalAim;
-////
-////                //세팅할 동적 버튼 설정
-////                totalBtnAry = new Button[totalAimcnt];
-////
-////                //전체목표 버튼을 생성할 스크롤뷰 안의 레이아웃
-////                LinearLayout totalAimLayout = (LinearLayout) findViewById(R.id.totalAimLinearLayout);
-////                //전체 목표가 없을 시
-////                if (totalAimcnt == 0) {
-////                    Log.d(TAG_JW+"project_management", "전체 목표 개수: 0");
-////                    Button total0Btn = new Button(getBaseContext());
-////                    total0Btn.setId(View.generateViewId());
-////                    total0Btn.setHeight(400);
-////                    total0Btn.setWidth(400);
-////                    total0Btn.setText("전체 목표 추가");
-////                    //추가버튼 클릭시 추가하는 액티비티로 전환
-////                    total0Btn.setOnClickListener(new View.OnClickListener() {
-////                        @Override
-////                        public void onClick(View view) {
-////                            Intent intent = new Intent(getApplicationContext(), ProjectAimAddActivity.class);
-////                            startActivity(intent);
-////                        }
-////                    });
-////                    totalAimLayout.addView(total0Btn);
-////                }
-////                //전체 목표가 있을시 버튼 추가
-////                else {
-////                    Log.d(TAG_JW+"project_management", "전체 목표 개수: " + totalAimcnt);
-////                    for (int i = 0; i < totalAimcnt; i++) {
-////                        totalBtnAry[i] = new Button(getBaseContext());
-////                        index = Integer.toString(i);
-////                        totalAim = documentSnapshot.getString(index);
-////
-////                        totalBtnAry[i].setId(View.generateViewId());
-////                        totalBtnAry[i].setHeight(400);
-////                        totalBtnAry[i].setWidth(400);
-////                        totalBtnAry[i].setText(totalAim);
-////                        totalAimLayout.addView(totalBtnAry[i]);
-////                    }
-////                }
-////            }
-////        });
-//////전체 진행도 관리
-////개인 진행도 관리
-////개인 진행도 관리
-//
-////참고자료 관리
-////참고자료 관리
-//    }
-//
-//    @Override
-//    public void onResume() {
-//        final String TAG_JW = getString(R.string.TAG_JW);
-//        //데이터 변경되었을때
-//        final DocumentReference docRef = db.
-//                collection("PatraSSU").
-//                document("TeamJw").
-//                collection("ProjectManagement").
-//                document("TotalAim");
-//
-//        docRef.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-//                Log.d("jinwoo/", "데이터가 변경되었음");
-//                Log.d("jinwoo/", documentSnapshot.getId() + "=>" + documentSnapshot.getData());
-//
-//                LinearLayout linearLayout = findViewById(R.id.totalAimLinearLayout);
-//                linearLayout.removeAllViews();
-////전체 진행도 관리
-//                Log.d(TAG_JW, "프로젝트 진행도 관리 액티비티 실행");
-//
-//
-//                Log.d(TAG_JW + "project_management", "프로젝트 진행도 db에서 받아오기");
-//                //값 설정
-//                int totalAimcnt = toIntExact(documentSnapshot.getLong("Aimcnt"));
-//                String index, totalAim;
-//
-//                //세팅할 동적 버튼 설정
-//                totalBtnAry = new Button[totalAimcnt];
-//
-//                //전체목표 버튼을 생성할 스크롤뷰 안의 레이아웃
-//                LinearLayout totalAimLayout = findViewById(R.id.totalAimLinearLayout);
-//                //전체 목표가 없을 시
-//                if (totalAimcnt == 0) {
-//                    Log.d(TAG_JW + "project_management", "전체 목표 개수: 0");
-//                    Button total0Btn = new Button(getBaseContext());
-//                    total0Btn.setId(View.generateViewId());
-//                    total0Btn.setHeight(400);
-//                    total0Btn.setWidth(400);
-//                    total0Btn.setText("전체 목표 추가");
-//                    //추가버튼 클릭시 추가하는 액티비티로 전환
-//                    total0Btn.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            Intent intent = new Intent(getApplicationContext(), ProjectAimAddActivity.class);
-//                            startActivity(intent);
-//                        }
-//                    });
-//                    totalAimLayout.addView(total0Btn);
-//                }
-//                //전체 목표가 있을시 버튼 추가
-//                else {
-//                    Log.d(TAG_JW + "project_management", "전체 목표 개수: " + totalAimcnt);
-//                    for (int i = 0; i < totalAimcnt; i++) {
-//                        totalBtnAry[i] = new Button(getBaseContext());
-//                        index = Integer.toString(i);
-//                        totalAim = documentSnapshot.getString(index);
-//
-//                        totalBtnAry[i].setId(View.generateViewId());
-//                        totalBtnAry[i].setHeight(400);
-//                        totalBtnAry[i].setWidth(400);
-//                        totalBtnAry[i].setText(totalAim);
-//                        totalAimLayout.addView(totalBtnAry[i]);
-//                    }
-//                }
-////전체 진행도 관리
-//            }
-//        });
-//        super.onResume();
-//    }
 }

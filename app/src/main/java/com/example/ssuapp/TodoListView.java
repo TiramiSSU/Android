@@ -5,9 +5,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,14 +15,19 @@ import androidx.annotation.Nullable;
 
 public class TodoListView extends RelativeLayout {
 
+    LinearLayout detailTextView;
+    LinearLayout detailEditText;
+
     TextView totalTodoTextView;
     TextView detail_1_TodoTextView;
     TextView detail_2_TodoTextView;
     TextView detail_3_TodoTextView;
+
     EditText totalTodoEditText;
     EditText detail_1_TodoEditText;
     EditText detail_2_TodoEditText;
     EditText detail_3_TodoEditText;
+
     ImageButton todoAddBtn;
     ImageButton todoEditBtn;
     ImageButton todoDeleteBtn;
@@ -50,6 +55,9 @@ public class TodoListView extends RelativeLayout {
         View v = inflater.inflate(R.layout.view_list_todo, this, false);
         addView(v);
 
+        detailTextView = findViewById(R.id.detailTextView);
+        detailEditText = findViewById(R.id.detailEditText);
+
         totalTodoTextView = findViewById(R.id.totalTodoTextView);
         detail_1_TodoTextView = findViewById(R.id.detail_1_TodoTextView);
         detail_2_TodoTextView = findViewById(R.id.detail_2_TodoTextView);
@@ -75,6 +83,24 @@ public class TodoListView extends RelativeLayout {
                 todoAddBtn.setVisibility(View.GONE);
                 todoEditBtn.setVisibility(View.VISIBLE);
                 todoDeleteBtn.setVisibility(View.VISIBLE);
+
+                //TextVIew - EditText 관리
+                String temp;
+
+                temp = totalTodoEditText.getText().toString();
+                totalTodoTextView.setText(temp);
+                temp = detail_1_TodoEditText.getText().toString();
+                detail_1_TodoTextView.setText(temp);
+                temp = detail_2_TodoEditText.getText().toString();
+                detail_2_TodoTextView.setText(temp);
+                temp = detail_3_TodoEditText.getText().toString();
+                detail_3_TodoTextView.setText(temp);
+
+                totalTodoTextView.setVisibility(View.VISIBLE);
+                totalTodoEditText.setVisibility(View.GONE);
+
+                detailTextView.setVisibility(View.VISIBLE);
+                detailEditText.setVisibility(View.GONE);
             }
         });
         //삭제버튼 누를때는 경고 한번 날려주고 확인시 삭제하고 DB에 값도 삭제
@@ -84,6 +110,7 @@ public class TodoListView extends RelativeLayout {
 
             }
         });
+
         //편집버튼      그리고 누를때는 EditText로 바꾸고 textview값을 그대로 가져옴
         todoEditBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -99,23 +126,17 @@ public class TodoListView extends RelativeLayout {
 
                 temp = totalTodoTextView.getText().toString();
                 totalTodoEditText.setText(temp);
-                totalTodoTextView.setVisibility(View.INVISIBLE);
-                totalTodoEditText.setVisibility(View.VISIBLE);
-
                 temp = detail_1_TodoTextView.getText().toString();
                 detail_1_TodoEditText.setText(temp);
-                detail_1_TodoTextView.setVisibility(View.INVISIBLE);
-                detail_1_TodoEditText.setVisibility(View.VISIBLE);
-
                 temp = detail_2_TodoTextView.getText().toString();
                 detail_2_TodoEditText.setText(temp);
-                detail_2_TodoTextView.setVisibility(View.INVISIBLE);
-                detail_2_TodoEditText.setVisibility(View.VISIBLE);
-
                 temp = detail_3_TodoTextView.getText().toString();
                 detail_3_TodoEditText.setText(temp);
-                detail_3_TodoTextView.setVisibility(View.INVISIBLE);
-                detail_3_TodoEditText.setVisibility(View.VISIBLE);
+
+                totalTodoTextView.setVisibility(View.GONE);
+                totalTodoEditText.setVisibility(View.VISIBLE);
+                detailTextView.setVisibility(View.GONE);
+                detailEditText.setVisibility(View.VISIBLE);
             }
         });
         //편집 취소 버튼 누를시 DB에 값 바꾸지 않고 다시 편집전의 Text로 돌아감
@@ -128,18 +149,11 @@ public class TodoListView extends RelativeLayout {
                 todoEditCalncleBtn.setVisibility(View.INVISIBLE);
                 todoEditCheckBtn.setVisibility(View.INVISIBLE);
 
-                //TextVIew - EditText 관리
                 totalTodoTextView.setVisibility(View.VISIBLE);
-                totalTodoEditText.setVisibility(View.INVISIBLE);
+                totalTodoEditText.setVisibility(View.GONE);
 
-                detail_1_TodoTextView.setVisibility(View.VISIBLE);
-                detail_1_TodoEditText.setVisibility(View.INVISIBLE);
-
-                detail_2_TodoTextView.setVisibility(View.VISIBLE);
-                detail_2_TodoEditText.setVisibility(View.INVISIBLE);
-
-                detail_3_TodoTextView.setVisibility(View.VISIBLE);
-                detail_3_TodoEditText.setVisibility(View.INVISIBLE);
+                detailTextView.setVisibility(View.VISIBLE);
+                detailEditText.setVisibility(View.GONE);
             }
         });
         //편집 확인 버튼 누를시에는 DB값바꾸고 편집한것의 Text로 돌아감
@@ -157,24 +171,18 @@ public class TodoListView extends RelativeLayout {
 
                 temp = totalTodoEditText.getText().toString();
                 totalTodoTextView.setText(temp);
-
-                totalTodoTextView.setVisibility(View.VISIBLE);
-                totalTodoEditText.setVisibility(View.INVISIBLE);
-
                 temp = detail_1_TodoEditText.getText().toString();
                 detail_1_TodoTextView.setText(temp);
-                detail_1_TodoTextView.setVisibility(View.VISIBLE);
-                detail_1_TodoEditText.setVisibility(View.INVISIBLE);
-
                 temp = detail_2_TodoEditText.getText().toString();
                 detail_2_TodoTextView.setText(temp);
-                detail_2_TodoTextView.setVisibility(View.VISIBLE);
-                detail_2_TodoEditText.setVisibility(View.INVISIBLE);
-
                 temp = detail_3_TodoEditText.getText().toString();
                 detail_3_TodoTextView.setText(temp);
-                detail_3_TodoTextView.setVisibility(View.VISIBLE);
-                detail_3_TodoEditText.setVisibility(View.INVISIBLE);
+
+                totalTodoTextView.setVisibility(View.VISIBLE);
+                totalTodoEditText.setVisibility(View.GONE);
+
+                detailTextView.setVisibility(View.VISIBLE);
+                detailEditText.setVisibility(View.GONE);
             }
         });
     }
@@ -186,23 +194,17 @@ public class TodoListView extends RelativeLayout {
 
                 temp = totalTodoTextView.getText().toString();
                 totalTodoEditText.setText(temp);
-                totalTodoTextView.setVisibility(View.INVISIBLE);
-                totalTodoEditText.setVisibility(View.VISIBLE);
-
                 temp = detail_1_TodoTextView.getText().toString();
                 detail_1_TodoEditText.setText(temp);
-                detail_1_TodoTextView.setVisibility(View.INVISIBLE);
-                detail_1_TodoEditText.setVisibility(View.VISIBLE);
-
                 temp = detail_2_TodoTextView.getText().toString();
                 detail_2_TodoEditText.setText(temp);
-                detail_2_TodoTextView.setVisibility(View.INVISIBLE);
-                detail_2_TodoEditText.setVisibility(View.VISIBLE);
-
                 temp = detail_3_TodoTextView.getText().toString();
                 detail_3_TodoEditText.setText(temp);
-                detail_3_TodoTextView.setVisibility(View.INVISIBLE);
-                detail_3_TodoEditText.setVisibility(View.VISIBLE);
+
+                totalTodoTextView.setVisibility(View.GONE);
+                totalTodoEditText.setVisibility(View.VISIBLE);
+                detailTextView.setVisibility(View.GONE);
+                detailEditText.setVisibility(View.VISIBLE);
 
                 Log.d("jinwoo/","Mode Type Add");
                 break;

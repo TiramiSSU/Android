@@ -24,8 +24,10 @@ import java.io.IOException;
 public class DownloadActivity extends AppCompatActivity implements View.OnClickListener
 {
     private File localFile = null;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
 
@@ -37,7 +39,8 @@ public class DownloadActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View v)
+    {
         switch (v.getId())
         {
             case R.id.localimgdownloadbtn:

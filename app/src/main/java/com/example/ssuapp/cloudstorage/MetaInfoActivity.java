@@ -18,7 +18,8 @@ import com.google.firebase.storage.StorageReference;
 public class MetaInfoActivity extends AppCompatActivity implements View.OnClickListener{
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meta_info);
 

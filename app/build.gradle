@@ -36,8 +36,10 @@ dependencies {
     //Firebase Anthentication
     implementation 'com.google.firebase:firebase-auth:19.1.0'
 
-    //Firebase UI
+    //Firebase Cloud Storage
+    implementation 'com.google.firebase:firebase-storage:18.1.1'
+
+    //FirebaseUI Storage only
     implementation 'com.firebaseui:firebase-ui-auth:4.3.2'
 
-    ''
 }

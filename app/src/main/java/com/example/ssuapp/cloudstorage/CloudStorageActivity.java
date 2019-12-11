@@ -26,10 +26,11 @@ public class CloudStorageActivity extends AppCompatActivity implements OnClickLi
     private Button downloadbtn;
     private Button metainfobtn;
     private Button deletebtn;
-
+    private Button filelistbtn;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cloud_storage);
 
@@ -45,6 +46,8 @@ public class CloudStorageActivity extends AppCompatActivity implements OnClickLi
         deletebtn = (Button) findViewById(R.id.deletebtn);
         deletebtn.setOnClickListener(this);
 
+        filelistbtn = (Button)findViewById(R.id.filelistbtn);
+        filelistbtn.setOnClickListener(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
@@ -57,6 +60,7 @@ public class CloudStorageActivity extends AppCompatActivity implements OnClickLi
                 downloadbtn.setEnabled(false);
                 metainfobtn.setEnabled(false);
                 deletebtn.setEnabled(false);
+                filelistbtn.setEnabled(false);
             }
         }
     }
@@ -80,9 +84,11 @@ public class CloudStorageActivity extends AppCompatActivity implements OnClickLi
             case R.id.deletebtn:
                 deleteFile();
                 break;
+            case R.id.filelistbtn:
+                i = new Intent(this, FileListActivity.class);
+                break;
             default:
                 break;
-
         }
 
         if(i != null)
@@ -92,16 +98,19 @@ public class CloudStorageActivity extends AppCompatActivity implements OnClickLi
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {
             case REQUEST_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
                     uploadbtn.setEnabled(true);
                     downloadbtn.setEnabled(true);
                     metainfobtn.setEnabled(true);
                     deletebtn.setEnabled(true);
+                    filelistbtn.setEnabled(true);
                 }
                 break;
             default:
@@ -109,26 +118,26 @@ public class CloudStorageActivity extends AppCompatActivity implements OnClickLi
         }
     }
 
-        private void deleteFile()
-        {
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageRef = storage.getReference();
+    private void deleteFile()
+    {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
 
-            StorageReference desertRef = storageRef.child("storage/1561444706529.jpg");
-            desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>()
+        StorageReference desertRef = storageRef.child("storage/1561444706529.jpg");
+        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>()
+        {
+            @Override
+            public void onSuccess(Void aVoid)
             {
-                @Override
-                public void onSuccess(Void aVoid)
-                {
-                    // File deleted successfully
-                }
-            }).addOnFailureListener(new OnFailureListener()
+                // File deleted successfully
+            }
+        }).addOnFailureListener(new OnFailureListener()
+        {
+            @Override
+            public void onFailure(@NonNull Exception exception)
             {
-                @Override
-                public void onFailure(@NonNull Exception exception)
-                {
-                    // Uh-oh, an error occurred!
-                }
-            });
-        }
+                // Uh-oh, an error occurred!
+            }
+        });
     }
+}

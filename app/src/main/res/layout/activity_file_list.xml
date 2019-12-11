@@ -6,4 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".cloudstorage.FileListActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/filelist"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toTopOf="parent">
+    </androidx.recyclerview.widget.RecyclerView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

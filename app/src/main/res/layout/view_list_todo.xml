@@ -22,7 +22,7 @@
             <!--            TextView - EditText 전환을 하기위해 visibility 속성 사용-->
             <TextView
                 android:id="@+id/totalTodoTextView"
-                android:layout_width="match_parent"
+                android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -30,7 +30,7 @@
 
             <EditText
                 android:id="@+id/totalTodoEditText"
-                android:layout_width="match_parent"
+                android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:hint="Add all member Goal"
                 android:lines="1"
@@ -59,7 +59,8 @@
                 android:layout_toStartOf="@id/todoEditCheckBtn"
                 android:background="#F01E90FF"
                 android:padding="10dp"
-                android:src="@drawable/icon_cancle_jw" />
+                android:src="@drawable/icon_cancle_jw"
+                android:visibility="gone"/>
             <!--            추가버튼-->
             <ImageButton
                 android:id="@+id/todoAddBtn"

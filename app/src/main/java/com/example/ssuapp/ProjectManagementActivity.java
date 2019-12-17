@@ -141,14 +141,13 @@ public class ProjectManagementActivity extends AppCompatActivity {
                 final DBTodoList myTodoList = documentSnapshot.toObject(DBTodoList.class);
 
                 //진행도 Custom View로 그리기
-                int cnt = myTodoList.getCnt();
-                if (cnt > 0) {
-                    String arr[] = myTodoList.getCountedStr().split("@");
+                String arr[] = myTodoList.getCountedStr().split("@");
+                if (arr.length > 0) {
                     final ArrayList<String> list = new ArrayList<String>(Arrays.asList(arr));
-                    final TodoListView[] myTodoListView = new TodoListView[cnt];
+                    final TodoListView[] myTodoListView = new TodoListView[arr.length];
                     TodoListView.LayoutParams myParams = new TodoListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     myParams.setMarginEnd(20);
-                    for (int i = 0; i < cnt; i++) {
+                    for (int i = 0; i < arr.length; i++) {
                         myTodoListView[i] = new TodoListView(getApplicationContext());
                         myTodoListView[i].changeMode("view");
                         myTodoListView[i].setTotalTodoText(arr[i]);

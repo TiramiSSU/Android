@@ -125,27 +125,6 @@ public class TodoListView extends RelativeLayout {
     public void button_clicked(String btnName) {
         String temp;
         switch (btnName) {
-            case "add"://버튼 visibility 관리
-                todoAddBtn.setVisibility(View.GONE);
-                todoEditBtn.setVisibility(View.VISIBLE);
-                todoDeleteBtn.setVisibility(View.VISIBLE);
-
-                //TextVIew - EditText 관리
-                temp = totalTodoEditText.getText().toString();
-                totalTodoTextView.setText(temp);
-                temp = detail_1_TodoEditText.getText().toString();
-                detail_1_TodoTextView.setText(temp);
-                temp = detail_2_TodoEditText.getText().toString();
-                detail_2_TodoTextView.setText(temp);
-                temp = detail_3_TodoEditText.getText().toString();
-                detail_3_TodoTextView.setText(temp);
-
-                totalTodoTextView.setVisibility(View.VISIBLE);
-                totalTodoEditText.setVisibility(View.GONE);
-
-                detailTextView.setVisibility(View.VISIBLE);
-                detailEditText.setVisibility(View.GONE);
-                break;
             case "editCheck":
                 //버튼 visibility 관리
                 todoEditBtn.setVisibility(View.VISIBLE);
@@ -235,6 +214,20 @@ public class TodoListView extends RelativeLayout {
 
     public String getDetail_3_TodoTextView() {
         return detail_3_TodoTextView.getText().toString();
+    }
+
+    public String getTotalEditText() {
+        return totalTodoEditText.getText().toString().trim();
+    }
+
+    public String getDetail_1_TodoEditText() {
+        return detail_1_TodoEditText.getText().toString().trim();
+    }
+    public String getDetail_2_TodoEditText() {
+        return detail_2_TodoEditText.getText().toString().trim();
+    }
+    public String getDetail_3_TodoEditText() {
+        return detail_3_TodoEditText.getText().toString().trim();
     }
 
     public boolean validTotalTodo() {

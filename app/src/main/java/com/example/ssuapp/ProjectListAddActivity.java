@@ -46,9 +46,9 @@ public class ProjectListAddActivity extends AppCompatActivity {
             Log.d("jinwoo/", "프로젝트 이름칸이 비어있음");
             Toast myToast = Toast.makeText(this.getApplicationContext(), "프로젝트 이름을 입력해주세요", Toast.LENGTH_SHORT);
             myToast.show();
-        } else if (projectName.contains("/")) {
-            Log.d("jinwoo/", "프로젝트 이름에 '/' 가 존재합니다.");
-            Toast myToast = Toast.makeText(this.getApplicationContext(), "/  은 사용 불가능한 문자입니다.", Toast.LENGTH_SHORT);
+        } else if (projectName.contains("@")) {
+            Log.d("jinwoo/", "프로젝트 이름에 '@' 가 존재합니다.");
+            Toast myToast = Toast.makeText(this.getApplicationContext(), "@  은 사용 불가능한 문자입니다.", Toast.LENGTH_SHORT);
             myToast.show();
         }
         //프로젝트 이름 입력이 되어있을때
@@ -103,7 +103,7 @@ public class ProjectListAddActivity extends AppCompatActivity {
                         cnt = userInfo.getProjectcnt();
                         cnt++;
                         projectlist = userInfo.getProjectlist();
-                        projectlist = projectlist.concat("/" + projectName);
+                        projectlist = projectlist.concat("@" + projectName);
                         userInfo.setProjectcnt(cnt);
                         userInfo.setProjectlist(projectlist);
                         userInfo.setName("박진우");

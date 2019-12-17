@@ -76,7 +76,7 @@ public class ProjectListActivity extends AppCompatActivity {
 
                     //참여중인 프로젝트가 2개 이상일때
                     else {
-                        String[] arr = documentSnapshot.getString("projectlist").split("/");
+                        String[] arr = documentSnapshot.getString("projectlist").split("@");
                         Button[] joinedProjectBtn = new Button[arr.length];
                         for (int i = 0; i < arr.length; i++) {
                             joinedProjectBtn[i] = new Button(getBaseContext());

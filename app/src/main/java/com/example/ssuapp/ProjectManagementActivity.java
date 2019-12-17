@@ -104,10 +104,10 @@ public class ProjectManagementActivity extends AppCompatActivity {
                             //구분자를 활용하여 '/'  String 을 사용 관리하여 가지고있는 프로젝트 리스트 관리
                             cnt--;
                             userInfo.setProjectcnt(cnt);
-                            eachProject = documentSnapshot.getString("projectlist").split("/");
+                            eachProject = documentSnapshot.getString("projectlist").split("@");
                             List<String> list = new ArrayList<>(Arrays.asList(eachProject));
                             list.remove(projectName);
-                            projectlist = list.stream().collect(Collectors.joining("/"));
+                            projectlist = list.stream().collect(Collectors.joining("@"));
                             userInfo.setProjectlist(projectlist);
                             db.collection("UserID").document(userid).set(userInfo);
                             Log.d("jinwoo/", "프로젝트 2개이상일때 삭제");
@@ -143,7 +143,7 @@ public class ProjectManagementActivity extends AppCompatActivity {
                 //진행도 Custom View로 그리기
                 int cnt = myTodoList.getCnt();
                 if (cnt > 0) {
-                    String arr[] = myTodoList.getCountedStr().split("/");
+                    String arr[] = myTodoList.getCountedStr().split("@");
                     final ArrayList<String> list = new ArrayList<String>(Arrays.asList(arr));
                     final TodoListView[] myTodoListView = new TodoListView[cnt];
                     TodoListView.LayoutParams myParams = new TodoListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -166,7 +166,7 @@ public class ProjectManagementActivity extends AppCompatActivity {
                                         list.set(i, saving_String);
                                     }
                                 }
-                                String temp = list.stream().collect(Collectors.joining("/"));
+                                String temp = list.stream().collect(Collectors.joining("@"));
                                 myTodoList.setCountedStr(temp);
                                 db.collection(projectName).document("Progress").
                                         collection("TotalProgress").document("TotalList").
@@ -196,7 +196,7 @@ public class ProjectManagementActivity extends AppCompatActivity {
                                                 list.remove(deleteString);
                                             }
                                         }
-                                        String temp = list.stream().collect(Collectors.joining("/"));
+                                        String temp = list.stream().collect(Collectors.joining("@"));
                                         myTodoList.setCountedStr(temp);
                                         tmp--;
                                         myTodoList.setCnt(tmp);
@@ -216,10 +216,16 @@ public class ProjectManagementActivity extends AppCompatActivity {
 
                 //전체 진행도 추가부분 DB에 반영
                 final TodoListView addTodoListView = new TodoListView(getApplicationContext());
+                //커스텀뷰의 버튼, TextVIew - EditText 전환
                 addTodoListView.changeMode("add");
                 addTodoListView.todoAddBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //세부진행도 추가할부분 default값 = ""
+                        String totalTemp = "";
+                        String detail_1 = "", detail_2 = "", detail_3 = "";
+                        DBDetailList dbDetailList = new DBDetailList();
+
                         //진행도 추가부분 Title 이 입력이 안되었을때
                         if (addTodoListView.validTotalTodo()) {
                             Log.d("jinwoo/", "입력이 없음");
@@ -229,16 +235,14 @@ public class ProjectManagementActivity extends AppCompatActivity {
                             int tempCnt = myTodoList.getCnt();
                             String tempString = myTodoList.getCountedStr();
 
-                            //커스텀뷰의 버튼, TextVIew - EditText 전환
-                            addTodoListView.button_clicked("add");
-
+                            //추가하는 진행도 Title
+                            totalTemp = addTodoListView.getTotalEditText();
                             //추가하는 데이터 넣어주기
                             //추가전 목표개수가 0개
                             if (tempCnt == 0) {
                                 tempCnt++;
                                 myTodoList.setCnt(tempCnt);
-                                tempString = addTodoListView.getTotalTodoText().trim();
-                                myTodoList.setCountedStr(tempString);
+                                myTodoList.setCountedStr(totalTemp);
                                 db.collection(projectName).document("Progress").
                                         collection("TotalProgress").document("TotalList").
                                         set(myTodoList);
@@ -247,16 +251,25 @@ public class ProjectManagementActivity extends AppCompatActivity {
                             else {
                                 tempCnt++;
                                 myTodoList.setCnt(tempCnt);
-                                tempString = tempString.concat("/" + addTodoListView.getTotalTodoText()).trim();
+                                tempString = tempString.concat("@" + totalTemp).trim();
                                 myTodoList.setCountedStr(tempString);
                                 db.collection(projectName).document("Progress").
                                         collection("TotalProgress").document("TotalList").
                                         set(myTodoList);
                             }
+                            detail_1 = addTodoListView.getDetail_1_TodoEditText();
+                            detail_2 = addTodoListView.getDetail_2_TodoEditText();
+                            detail_3 = addTodoListView.getDetail_3_TodoEditText();
+                            dbDetailList.setDetail1(detail_1);
+                            dbDetailList.setDetail2(detail_2);
+                            dbDetailList.setDetail3(detail_3);
+                            db.collection(projectName).document("Progress")
+                                    .collection("TotalProgress").document(totalTemp).set(dbDetailList);
                         }
                     }
                 });
                 totalAimLayout.addView(addTodoListView);
+
             }
         });
 

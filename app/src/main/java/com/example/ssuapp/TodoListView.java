@@ -129,7 +129,7 @@ public class TodoListView extends RelativeLayout {
                 detailEditText.setVisibility(View.GONE);
             }
         });
-//        //체크박스 선택될때 뷰 바꾸기
+        //체크박스 선택될때 뷰 색깔 바꾸기
         progressCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

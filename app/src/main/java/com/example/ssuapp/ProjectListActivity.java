@@ -20,6 +20,7 @@ import com.google.firebase.firestore.MetadataChanges;
 
 public class ProjectListActivity extends AppCompatActivity {
 
+    private static final int RC_SIGN_IN = 007;
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
     final String userid = "iw2swiambfs";
 
@@ -110,7 +111,6 @@ public class ProjectListActivity extends AppCompatActivity {
             }
         });
         //각 팀에 속해있는지 판단후 팀이 없다면 추가를 있다면 리스트도 포함하여 출력
-//프로젝트 리스트 출력부분
 
         super.onResume();
     }

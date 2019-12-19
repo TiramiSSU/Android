@@ -8,7 +8,6 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ssuapp.authentication.AuthActivity;
-import com.example.ssuapp.authentication.FirebaseUIActivity;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{

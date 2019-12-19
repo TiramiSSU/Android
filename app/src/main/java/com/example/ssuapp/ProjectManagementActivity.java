@@ -170,16 +170,20 @@ public class ProjectManagementActivity extends AppCompatActivity {
                             public void onSuccess(DocumentSnapshot ds) {
                                 DBDetailList tempDBDetialList;
                                 String tempStr;
-                                tempDBDetialList = ds.toObject(DBDetailList.class);
-                                tempStr = tempDBDetialList.getDetail1();
-                                tempDetail.setDetail1(tempStr);
-                                tempStr = tempDBDetialList.getDetail2();
-                                tempDetail.setDetail2(tempStr);
-                                tempStr = tempDBDetialList.getDetail3();
-                                tempDetail.setDetail3(tempStr);
-                                myTodoListView[tempFinal].setDetail_1_TodoTextView(tempDetail.getDetail1());
-                                myTodoListView[tempFinal].setDetail_2_TodoTextView(tempDetail.getDetail2());
-                                myTodoListView[tempFinal].setDetail_3_TodoTextView(tempDetail.getDetail3());
+                                try {
+                                    tempDBDetialList = ds.toObject(DBDetailList.class);
+                                    tempStr = tempDBDetialList.getDetail1();
+                                    tempDetail.setDetail1(tempStr);
+                                    tempStr = tempDBDetialList.getDetail2();
+                                    tempDetail.setDetail2(tempStr);
+                                    tempStr = tempDBDetialList.getDetail3();
+                                    tempDetail.setDetail3(tempStr);
+                                    myTodoListView[tempFinal].setDetail_1_TodoTextView(tempDetail.getDetail1());
+                                    myTodoListView[tempFinal].setDetail_2_TodoTextView(tempDetail.getDetail2());
+                                    myTodoListView[tempFinal].setDetail_3_TodoTextView(tempDetail.getDetail3());
+                                } catch (NullPointerException e) {
+                                    Log.d("jinwoo/", "널객체!");
+                                }
                             }
                         });
 
@@ -197,7 +201,7 @@ public class ProjectManagementActivity extends AppCompatActivity {
                                     //DB 전체 진행도에서 관리
                                     saved_String = tempTodoListView.getTotalTodoText();
                                     tempTodoListView.button_clicked("editCheck");
-                                    saving_String = tempTodoListView.getTotalTodoText();
+                                    saving_String = tempTodoListView.getTotalEditText();
 
                                     for (int i = 0; i < list.size(); i++) {
                                         if (list.get(i).equals(saved_String)) {

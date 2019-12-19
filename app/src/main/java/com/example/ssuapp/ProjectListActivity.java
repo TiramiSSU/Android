@@ -4,13 +4,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -24,11 +29,38 @@ public class ProjectListActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
     final String userid = "iw2swiambfs";
 
+    //유저 아이디 부분
+    TextView userName;
+    TextView userEmail;
+    TextView userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_list);
 
+        FirebaseUser curUser = FirebaseAuth.getInstance().getCurrentUser();
+        userName = findViewById(R.id.userName);
+        userEmail = findViewById(R.id.userEmail);
+        userId = findViewById(R.id.userId);
+        String name = "baseUser";
+        if (curUser != null) {
+            for (UserInfo profile : curUser.getProviderData()) {
+                String providerID = profile.getProviderId();
+                String uid = profile.getUid();
+
+                name = profile.getDisplayName();
+                String email = profile.getEmail();
+                Uri photoUri = profile.getPhotoUrl();
+
+                if (name != "")
+                    userName.setText(name);
+                if (email != "")
+                    userEmail.setText(email);
+                if (uid != "")
+                    userId.setText(uid);
+            }
+        }
     }
 
     @Override
@@ -45,7 +77,6 @@ public class ProjectListActivity extends AppCompatActivity {
                 projectListLayout.removeAllViews();
                 //비어있을때는 새로 생성
                 if (documentSnapshot.getLong("projectcnt") == null) {
-                    Log.d("jinwoo/", "비어있습니다");
                     ProjectList userProjectList = new ProjectList();
                     userProjectList.setProjectcnt(0);
                     userProjectList.setProjectlist(null);
@@ -54,8 +85,6 @@ public class ProjectListActivity extends AppCompatActivity {
                 //참여중프로젝트가 0개일때
                 else if (documentSnapshot.getLong("projectcnt") == 0) {
                 } else {
-                    Log.d("jinwoo/", "" + documentSnapshot.getData());
-
                     String projectlist = documentSnapshot.getString("projectlist");
                     int slashcnt = documentSnapshot.getLong("projectcnt").intValue();
 

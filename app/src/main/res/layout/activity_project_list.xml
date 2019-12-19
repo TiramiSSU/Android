@@ -1,17 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProjectListActivity">
 
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:textColor="#000000"
+        android:id="@+id/userName"
+        android:hint="UserId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:textColor="#000000"
+        android:id="@+id/userEmail"
+        android:hint="UserEmail"
+        android:layout_below="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:textColor="#000000"
+        android:id="@+id/userId"
+        android:hint="UserId"
+        android:layout_below="@+id/userEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 <!--    참여중인 프로젝트 리스트-->
     <HorizontalScrollView
         android:id="@+id/ProjectListHorizenScroll"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_gravity="center"
+        android:layout_centerVertical="true"
         android:layout_marginBottom="70dp">
 
 <!--        버튼은 모두 동적으로 배당-->
@@ -26,4 +54,4 @@
     </HorizontalScrollView>
 <!--    참여중인 프로젝트 리스트-->
 
-</LinearLayout>
+</RelativeLayout>

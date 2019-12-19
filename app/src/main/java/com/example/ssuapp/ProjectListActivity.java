@@ -35,6 +35,7 @@ public class ProjectListActivity extends AppCompatActivity {
     TextView userNameTextView;
     TextView userEmailTextView;
 
+    DBUserInformation userInformation;
     String userid;
     String useremail;
     String username;
@@ -69,26 +70,28 @@ public class ProjectListActivity extends AppCompatActivity {
             }
         }
 
-        try{
-            DocumentReference documentReference = db.collection("UserID").document(userid);
-            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    invitedProjectName = documentSnapshot.getString("invitedproject");
-                    changeStr = documentSnapshot.getString("projectlist");
-                    cnt = documentSnapshot.getLong("projectcnt").intValue();
+        DocumentReference documentReference = db.collection("UserID").document(userid);
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                try {
+                    userInformation = documentSnapshot.toObject(DBUserInformation.class);
+                    invitedProjectName = userInformation.getInvitedproject();
+                    changeStr = userInformation.getProjectlist();
+                    cnt = userInformation.getProjectcnt();
+                } catch (NullPointerException e) {
+                    DBUserInformation newUser = new DBUserInformation();
+                    newUser.setId(userid);
+                    newUser.setEmail(useremail);
+                    newUser.setName(username);
+                    newUser.setProjectcnt(0);
+                    newUser.setProjectlist("");
+                    newUser.setInvitedproject("");
+                    db.collection("UserID").document(userid).set(newUser);
                 }
-            });
-        }catch (NullPointerException e){
-            DBUserInformation newUser = new DBUserInformation();
-            newUser.setId(userid);
-            newUser.setEmail(useremail);
-            newUser.setName(username);
-            newUser.setProjectcnt(0);
-            newUser.setProjectlist("");
-            newUser.setInvitedproject("");
-            db.collection("UserID").document(userid).set(newUser);
-        }
+            }
+        });
+
 
         invitedProject = findViewById(R.id.invited_project_btn);
         invitedProject.setOnClickListener(new View.OnClickListener() {
@@ -102,12 +105,12 @@ public class ProjectListActivity extends AppCompatActivity {
                         builder.setMessage("초대받은 프로젝트가 없습니다.");
                         builder.setNegativeButton("확인", null);
                     } else {
-                        builder.setMessage(invitedProjectName + "프로젝트에 참가하시겠습니까?");
+                        builder.setMessage(invitedProjectName + "\r프로젝트에 참가하시겠습니까?");
                         builder.setPositiveButton("수락", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 DocumentReference docRef = db.collection("UserID").document(userid);
-                                docRef.update("invitedproject", "", "projectlist", changeStr +"@"+ invitedProjectName,"projectcnt",++cnt)
+                                docRef.update("invitedproject", "", "projectlist", changeStr + "@" + invitedProjectName, "projectcnt", ++cnt)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {

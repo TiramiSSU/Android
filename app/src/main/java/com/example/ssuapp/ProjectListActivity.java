@@ -1,17 +1,22 @@
 package com.example.ssuapp;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -27,11 +32,18 @@ public class ProjectListActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
 
     //유저 아이디 부분
-    TextView userName;
-    TextView userEmail;
-    TextView userId;
+    TextView userNameTextView;
+    TextView userEmailTextView;
 
     String userid;
+    String useremail;
+    String username;
+
+    Button invitedProject;
+    AlertDialog invitedDialog;
+    String invitedProjectName;
+    String changeStr;
+    int cnt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,33 +51,103 @@ public class ProjectListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_project_list);
 
         FirebaseUser curUser = FirebaseAuth.getInstance().getCurrentUser();
-        userName = findViewById(R.id.userName);
-        userEmail = findViewById(R.id.userEmail);
-        userId = findViewById(R.id.userId);
-        String name = "baseUser";
+        userNameTextView = findViewById(R.id.userName);
+        userEmailTextView = findViewById(R.id.userEmail);
         if (curUser != null) {
             for (UserInfo profile : curUser.getProviderData()) {
-                String providerID = profile.getProviderId();
-                userid = profile.getUid();
+                if (!profile.getUid().equals(""))
+                    userid = profile.getUid();
+                if (!profile.getDisplayName().equals(""))
+                    username = profile.getDisplayName();
+                if (!profile.getEmail().equals(""))
+                    useremail = profile.getEmail();
 
-                name = profile.getDisplayName();
-                String email = profile.getEmail();
-                Uri photoUri = profile.getPhotoUrl();
-
-                if (name != "")
-                    userName.setText(name);
-                if (email != "")
-                    userEmail.setText(email);
-                if (userid != "")
-                    userId.setText(userid);
+                if (!username.equals(""))
+                    userNameTextView.setText(username);
+                if (!useremail.equals(""))
+                    userEmailTextView.setText(useremail);
             }
         }
+
+        DocumentReference documentReference = db.collection("UserID").document(userid);
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                invitedProjectName = documentSnapshot.getString("invitedproject");
+                changeStr = documentSnapshot.getString("projectlist");
+                cnt = documentSnapshot.getLong("projectcnt").intValue();
+            }
+        });
+
+        invitedProject = findViewById(R.id.invited_project_btn);
+        invitedProject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProjectListActivity.this);
+                builder.setIcon(R.drawable.icon_invite);
+                builder.setTitle("초대");
+                try {
+                    if (invitedProjectName.equals("")) {
+                        builder.setMessage("초대받은 프로젝트가 없습니다.");
+                        builder.setNegativeButton("확인", null);
+                    } else {
+                        builder.setMessage(invitedProjectName + "프로젝트에 참가하시겠습니까?");
+                        builder.setPositiveButton("수락", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                DocumentReference docRef = db.collection("UserID").document(userid);
+                                docRef.update("invitedproject", "", "projectlist", changeStr +"@"+ invitedProjectName,"projectcnt",++cnt)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                            }
+                                        });
+                                invitedProjectName = "";
+                            }
+                        });
+                        builder.setNegativeButton("거절", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                invitedProjectName = "";
+                                DocumentReference docRef = db.collection("UserID").document(userid);
+                                docRef.update("invitedproject", "")
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                            }
+                                        });
+                            }
+                        });
+                    }
+                } catch (NullPointerException e) {
+                    Log.d("jinwoo/", "초대 없다고뜸!");
+                    builder.setMessage("초대받은 프로젝트가 없습니다.");
+                    builder.setNegativeButton("확인", null);
+                }
+
+                invitedDialog = builder.create();
+                invitedDialog.show();
+            }
+        });
     }
 
     @Override
     protected void onResume() {
-//프로젝트 리스트 출력부분
-        //각 기기의 고유값으로 userID생성후 접근 but 지금은 정적으로 접근
+        //프로젝트 리스트 출력부분
         final ViewGroup.LayoutParams btnParams = new ViewGroup.LayoutParams(400, ViewGroup.LayoutParams.MATCH_PARENT);
 
         DocumentReference docRef = db.collection("UserID").document(userid);
@@ -136,6 +218,14 @@ public class ProjectListActivity extends AppCompatActivity {
                     }
                 });
                 projectListLayout.addView(addProjectBtn, btnParams);
+            }
+        });
+
+        DocumentReference documentReference = db.collection("UserID").document(userid);
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                invitedProjectName = documentSnapshot.getString("invitedproject");
             }
         });
         //각 팀에 속해있는지 판단후 팀이 없다면 추가를 있다면 리스트도 포함하여 출력

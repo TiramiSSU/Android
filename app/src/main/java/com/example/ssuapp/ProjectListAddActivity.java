@@ -29,6 +29,7 @@ public class ProjectListAddActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
     String userid;
     String username;
+    String useremail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +39,12 @@ public class ProjectListAddActivity extends AppCompatActivity {
         FirebaseUser curUser = FirebaseAuth.getInstance().getCurrentUser();
         if (curUser != null) {
             for (UserInfo profile : curUser.getProviderData()) {
-                userid = profile.getUid();
-                if (profile.getDisplayName() != "")
+                if (!profile.getUid().equals(""))
+                    userid = profile.getUid();
+                if (!profile.getDisplayName().equals(""))
                     username = profile.getDisplayName();
+                if (!profile.getEmail().equals(""))
+                    useremail = profile.getEmail();
             }
         }
     }
@@ -94,6 +98,7 @@ public class ProjectListAddActivity extends AppCompatActivity {
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     int cnt;
                     String projectlist;
+                    String invitedProject;
                     DBUserInformation userInfo = documentSnapshot.toObject(DBUserInformation.class);
                     //기존 프로젝트가 0개일때
                     if (userInfo.getProjectcnt() == 0) {
@@ -102,8 +107,11 @@ public class ProjectListAddActivity extends AppCompatActivity {
                         projectlist = projectName;
                         userInfo.setProjectcnt(cnt);
                         userInfo.setProjectlist(projectlist);
-                        //이부분은 나중에 각자의 이름으로 바꿔야하나 지금은 개인으로 사용중
                         userInfo.setName(username);
+                        userInfo.setEmail(useremail);
+                        userInfo.setId(userid);
+                        invitedProject = userInfo.getInvitedproject();
+                        userInfo.setInvitedproject(invitedProject);
                         db.collection("UserID").document(userid).set(userInfo);
                     }
                     //추가할게 1개이상일 때
@@ -115,6 +123,10 @@ public class ProjectListAddActivity extends AppCompatActivity {
                         userInfo.setProjectcnt(cnt);
                         userInfo.setProjectlist(projectlist);
                         userInfo.setName(username);
+                        userInfo.setEmail(useremail);
+                        userInfo.setId(userid);
+                        invitedProject = userInfo.getInvitedproject();
+                        userInfo.setInvitedproject(invitedProject);
                         db.collection("UserID").document(userid).set(userInfo);
                     }
                 }

@@ -8,14 +8,20 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -25,6 +31,8 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,12 +42,18 @@ import java.util.stream.Collectors;
 public class ProjectManagementActivity extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
+
     AlertDialog myProjectDeleteDialog;  //프로젝트 삭제 다이얼로그
     AlertDialog myProjectJoinedPeopleDialog; //프로젝트 참여자 다이얼로그
-    String projectName;
+    AlertDialog myProjectInviteDialog;
 
+    String projectName;
     String userid;
     String username;
+    String[] joinedName;
+
+    Button inviteBtn;
+    String inviteId;
 
     @Override
     protected void onCreate(Bundle saveInstanceState) {
@@ -53,13 +67,98 @@ public class ProjectManagementActivity extends AppCompatActivity {
         db.collection(projectName).document("Progress");
 
         FirebaseUser curUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(curUser != null){
-            for(UserInfo profile:curUser.getProviderData()){
+        if (curUser != null) {
+            for (UserInfo profile : curUser.getProviderData()) {
                 userid = profile.getUid();
                 username = profile.getDisplayName();
             }
         }
 
+        //참여자 다이얼로그 item 받아오기
+        DocumentReference docRef = db.collection(projectName).document("Progress");
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                joinedName = documentSnapshot.getData().toString().split(",");
+                for (int i = 0; i < joinedName.length; i++) {
+                    joinedName[i] = joinedName[i].substring(joinedName[i].lastIndexOf("=") + 1);
+                }
+                joinedName[joinedName.length - 1] = joinedName[joinedName.length - 1].replace("}", "");
+            }
+        });
+
+        inviteBtn = findViewById(R.id.Project_Invite_People);
+        inviteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inviteProject();
+            }
+        });
+    }
+
+    //프로젝트 초대
+    public void inviteProject() {
+        final EditText inputEmail = new EditText(this);
+        inputEmail.setBackground(null);
+        inputEmail.setHint("이메일을 입력해주세요");
+        inputEmail.setPadding(100, 0, 100, 0);
+        inputEmail.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setIcon(R.drawable.icon_invite);
+        builder.setTitle("프로젝트 초대");
+        builder.setView(inputEmail);
+        builder.setMessage("초대할 사람 이메일을 입력해주세요.");
+        builder.setPositiveButton("초대", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String inputMail = inputEmail.getText().toString().trim();
+                //이메일 형식이 아닐때
+                if (!Patterns.EMAIL_ADDRESS.matcher(inputMail).matches()) {
+                    Toast.makeText(ProjectManagementActivity.this, "이메일 형식이 아닙니다.", Toast.LENGTH_SHORT).show();
+                }
+                //이메일 형식 일때
+                else {
+                    db.collection("UserID")
+                            .whereEqualTo("email", inputMail)
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            inviteId = document.getString("id");
+                                            Log.d("jinwoo/", "초대한 ID:  " + inviteId);
+
+                                            DocumentReference inviteDocRef = db.collection("UserID").document(inviteId);
+                                            inviteDocRef
+                                                    .update("invitedproject", projectName)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d("jinwoo/", "업데이트 성공");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.d("jinwoo/", "업데이트 에러", e);
+                                                        }
+                                                    });
+                                        }
+                                    } else {
+                                        Log.d("jinwoo/", "문서 가져오기오류 ", task.getException());
+                                    }
+                                }
+                            });
+
+
+                }
+                Log.d("jinwoo/", inputMail);
+            }
+        });
+        builder.setNegativeButton("취소", null);
+        myProjectInviteDialog = builder.create();
+        myProjectInviteDialog.show();
     }
 
     //프로젝트 삭제 및 참여자 버튼은 툴바에 바꿀것
@@ -75,9 +174,17 @@ public class ProjectManagementActivity extends AppCompatActivity {
         myProjectDeleteDialog.show();
     }
 
+    //참여자 다이얼로그
     public void onClickJoinedPeople(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("참여자");
+
+        builder.setItems(joinedName, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
         myProjectJoinedPeopleDialog = builder.create();
         myProjectJoinedPeopleDialog.show();
     }

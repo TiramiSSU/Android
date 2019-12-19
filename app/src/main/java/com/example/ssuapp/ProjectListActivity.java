@@ -69,15 +69,26 @@ public class ProjectListActivity extends AppCompatActivity {
             }
         }
 
-        DocumentReference documentReference = db.collection("UserID").document(userid);
-        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                invitedProjectName = documentSnapshot.getString("invitedproject");
-                changeStr = documentSnapshot.getString("projectlist");
-                cnt = documentSnapshot.getLong("projectcnt").intValue();
-            }
-        });
+        try{
+            DocumentReference documentReference = db.collection("UserID").document(userid);
+            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    invitedProjectName = documentSnapshot.getString("invitedproject");
+                    changeStr = documentSnapshot.getString("projectlist");
+                    cnt = documentSnapshot.getLong("projectcnt").intValue();
+                }
+            });
+        }catch (NullPointerException e){
+            DBUserInformation newUser = new DBUserInformation();
+            newUser.setId(userid);
+            newUser.setEmail(useremail);
+            newUser.setName(username);
+            newUser.setProjectcnt(0);
+            newUser.setProjectlist("");
+            newUser.setInvitedproject("");
+            db.collection("UserID").document(userid).set(newUser);
+        }
 
         invitedProject = findViewById(R.id.invited_project_btn);
         invitedProject.setOnClickListener(new View.OnClickListener() {

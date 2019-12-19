@@ -5,6 +5,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -33,6 +35,10 @@ public class TodoListView extends RelativeLayout {
     ImageButton todoDeleteBtn;
     ImageButton todoEditCheckBtn;
     ImageButton todoEditCalncleBtn;
+
+    CheckBox progressCheckBox;
+    RelativeLayout entireLayout;
+    RelativeLayout titleLayout;
 
     public TodoListView(Context context) {
         super(context);
@@ -73,6 +79,10 @@ public class TodoListView extends RelativeLayout {
         todoDeleteBtn = findViewById(R.id.todoDeleteBtn);
         todoEditCheckBtn = findViewById(R.id.todoEditCheckBtn);
         todoEditCalncleBtn = findViewById(R.id.todoEditCancleBtn);
+
+        progressCheckBox = findViewById(R.id.progress_check);
+        entireLayout = findViewById(R.id.entireLayout);
+        titleLayout = findViewById(R.id.titleMenuBar);
 
         //편집버튼      그리고 누를때는 EditText로 바꾸고 textview값을 그대로 가져옴
         todoEditBtn.setOnClickListener(new OnClickListener() {
@@ -117,6 +127,28 @@ public class TodoListView extends RelativeLayout {
 
                 detailTextView.setVisibility(View.VISIBLE);
                 detailEditText.setVisibility(View.GONE);
+            }
+        });
+//        //체크박스 선택될때 뷰 바꾸기
+        progressCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (progressCheckBox.isChecked()) {
+                    entireLayout.setBackgroundColor(getResources().getColor(R.color.gray_2));
+                    titleLayout.setBackgroundColor(getResources().getColor(R.color.gray_1));
+                    todoDeleteBtn.setBackgroundColor(getResources().getColor(R.color.gray_2));
+                    todoEditBtn.setBackgroundColor(getResources().getColor(R.color.gray_2));
+                    todoEditCalncleBtn.setBackgroundColor(getResources().getColor(R.color.gray_2));
+                    todoEditCheckBtn.setBackgroundColor(getResources().getColor(R.color.gray_2));
+
+                } else if (!progressCheckBox.isChecked()) {
+                    entireLayout.setBackgroundColor(getResources().getColor(R.color.blue_1));
+                    titleLayout.setBackgroundColor(getResources().getColor(R.color.blue_2));
+                    todoDeleteBtn.setBackgroundColor(getResources().getColor(R.color.blue_1));
+                    todoEditBtn.setBackgroundColor(getResources().getColor(R.color.blue_1));
+                    todoEditCalncleBtn.setBackgroundColor(getResources().getColor(R.color.blue_1));
+                    todoEditCheckBtn.setBackgroundColor(getResources().getColor(R.color.blue_1));
+                }
             }
         });
     }
@@ -170,16 +202,15 @@ public class TodoListView extends RelativeLayout {
                 detailTextView.setVisibility(View.GONE);
                 detailEditText.setVisibility(View.VISIBLE);
 
-                Log.d("jinwoo/", "Mode Type Add");
+                progressCheckBox.setVisibility(View.GONE);
                 break;
             case "view":
                 todoAddBtn.setVisibility(View.GONE);
                 todoEditBtn.setVisibility(View.VISIBLE);
                 todoDeleteBtn.setVisibility(View.VISIBLE);
-                Log.d("jinwoo/", "Mode Type View");
+                progressCheckBox.setVisibility(View.VISIBLE);
                 break;
             default:
-                Log.d("jinwoo/", "Mode Type 이상함");
                 break;
         }
     }
@@ -223,9 +254,11 @@ public class TodoListView extends RelativeLayout {
     public String getDetail_1_TodoEditText() {
         return detail_1_TodoEditText.getText().toString().trim();
     }
+
     public String getDetail_2_TodoEditText() {
         return detail_2_TodoEditText.getText().toString().trim();
     }
+
     public String getDetail_3_TodoEditText() {
         return detail_3_TodoEditText.getText().toString().trim();
     }

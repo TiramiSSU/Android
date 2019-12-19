@@ -4,17 +4,20 @@ public class DBDetailList {
     String detail1;
     String detail2;
     String detail3;
+    boolean completed;
 
     public DBDetailList() {
         this.detail1 = "";
         this.detail2 = "";
         this.detail3 = "";
+        this.completed = false;
     }
 
-    public DBDetailList(String detail1, String detail2, String detail3) {
+    public DBDetailList(String detail1, String detail2, String detail3, boolean completed) {
         this.detail1 = detail1;
         this.detail2 = detail2;
         this.detail3 = detail3;
+        this.completed = completed;
     }
 
     public String getDetail1() {
@@ -39,5 +42,13 @@ public class DBDetailList {
 
     public void setDetail3(String detail3) {
         this.detail3 = detail3;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }

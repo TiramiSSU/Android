@@ -26,7 +26,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:visibility="visible" />
+                android:visibility="visible"
+                android:hint="Goal Title"/>
 
             <EditText
                 android:id="@+id/totalTodoEditText"
@@ -109,6 +110,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:hint="- 세부사항"
                 android:textSize="14sp"/>
 
 
@@ -117,6 +119,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:hint="- 세부사항"
                 android:textSize="14sp"/>
 
 
@@ -125,6 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:hint="- 세부사항"
                 android:textSize="14sp"/>
 
         </LinearLayout>
@@ -144,7 +148,7 @@
                 android:layout_weight="1"
                 android:lines="1"
                 android:singleLine="true"
-                android:hint="- 편집 세부사항1"
+                android:hint="- 편집 세부사항"
                 android:textSize="14sp"/>
 
             <EditText
@@ -154,7 +158,7 @@
                 android:layout_weight="1"
                 android:lines="1"
                 android:singleLine="true"
-                android:hint="- 편집 세부사항2"
+                android:hint="- 편집 세부사항"
                 android:textSize="14sp"/>
 
             <EditText
@@ -164,7 +168,7 @@
                 android:layout_weight="1"
                 android:lines="1"
                 android:singleLine="true"
-                android:hint="- 편집 세부사항3"
+                android:hint="- 편집 세부사항"
                 android:textSize="14sp"/>
         </LinearLayout>
     </LinearLayout>

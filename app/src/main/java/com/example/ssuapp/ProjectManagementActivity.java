@@ -1,5 +1,6 @@
 package com.example.ssuapp;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -127,6 +129,7 @@ public class ProjectManagementActivity extends AppCompatActivity {
     @Override
     public void onResume() {
 
+        //전체 진행도
         final LinearLayout totalAimLayout = findViewById(R.id.totalAimLinearLayout);
 
         DocumentReference docRef = db.collection(projectName).document("Progress").collection("TotalProgress").document("TotalList");
@@ -138,11 +141,17 @@ public class ProjectManagementActivity extends AppCompatActivity {
                 //데이터가 바뀔 때 마다 새로 그리기 위해 지움
                 totalAimLayout.removeAllViews();
 
+                //DB에서 전체 진행도 과정 받기
                 final DBTodoList myTodoList = documentSnapshot.toObject(DBTodoList.class);
+
 
                 //진행도 Custom View로 그리기
                 String arr[] = myTodoList.getCountedStr().split("@");
-                if (arr.length > 0) {
+
+                //DB에서 진행도 세부사항 받기
+                final DBDetailList tempDetail = new DBDetailList();
+
+                if (arr.length > 0 && !arr[0].equals("")) {
                     final ArrayList<String> list = new ArrayList<String>(Arrays.asList(arr));
                     final TodoListView[] myTodoListView = new TodoListView[arr.length];
                     TodoListView.LayoutParams myParams = new TodoListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -151,25 +160,95 @@ public class ProjectManagementActivity extends AppCompatActivity {
                         myTodoListView[i] = new TodoListView(getApplicationContext());
                         myTodoListView[i].changeMode("view");
                         myTodoListView[i].setTotalTodoText(arr[i]);
+
+                        DocumentReference tempDocRef = db.collection(projectName).document("Progress")
+                                .collection("TotalProgress").document(arr[i]);
+
+                        final int tempFinal = i;
+                        tempDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot ds) {
+                                DBDetailList tempDBDetialList;
+                                String tempStr;
+                                tempDBDetialList = ds.toObject(DBDetailList.class);
+                                tempStr = tempDBDetialList.getDetail1();
+                                tempDetail.setDetail1(tempStr);
+                                tempStr = tempDBDetialList.getDetail2();
+                                tempDetail.setDetail2(tempStr);
+                                tempStr = tempDBDetialList.getDetail3();
+                                tempDetail.setDetail3(tempStr);
+                                myTodoListView[tempFinal].setDetail_1_TodoTextView(tempDetail.getDetail1());
+                                myTodoListView[tempFinal].setDetail_2_TodoTextView(tempDetail.getDetail2());
+                                myTodoListView[tempFinal].setDetail_3_TodoTextView(tempDetail.getDetail3());
+                            }
+                        });
+
                         //편집부분 클릭이벤트 DB에 반영
                         myTodoListView[i].todoEditCheckBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                String saveed_String, saving_String;
+                                final String saved_String, saving_String;
                                 TodoListView tempTodoListView = (TodoListView) view.getParent().getParent().getParent().getParent();
-                                saveed_String = tempTodoListView.getTotalTodoText();
-                                tempTodoListView.button_clicked("editCheck");
-                                saving_String = tempTodoListView.getTotalTodoText();
-                                for (int i = 0; i < list.size(); i++) {
-                                    if (list.get(i).equals(saveed_String)) {
-                                        list.set(i, saving_String);
+                                //수정할때 title 입력이 안되어있다.
+                                if (tempTodoListView.validTotalTodo()) {
+                                    Toast toast = Toast.makeText(getApplicationContext(), "수정할 목표의 Title을 입력해 주세요.", Toast.LENGTH_SHORT);
+                                    toast.show();
+                                } else {
+                                    //DB 전체 진행도에서 관리
+                                    saved_String = tempTodoListView.getTotalTodoText();
+                                    tempTodoListView.button_clicked("editCheck");
+                                    saving_String = tempTodoListView.getTotalTodoText();
+
+                                    for (int i = 0; i < list.size(); i++) {
+                                        if (list.get(i).equals(saved_String)) {
+                                            list.set(i, saving_String);
+                                        }
                                     }
+
+                                    String temp = list.stream().collect(Collectors.joining("@"));
+                                    myTodoList.setCountedStr(temp);
+                                    db.collection(projectName).document("Progress").
+                                            collection("TotalProgress").document("TotalList").
+                                            set(myTodoList);
+
+                                    //DB 전체 진행도에서 세부사항 부분
+                                    //세부진행도에 아무거나 바꿀때마다 저장후 삭제
+                                    //데이터 저장 부분
+                                    DocumentReference dataSaveDR = db.collection(projectName).document("Progress")
+                                            .collection("TotalProgress").document(saved_String);
+                                    dataSaveDR.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot ds) {
+                                            String tempStr;
+                                            tempStr = myTodoListView[tempFinal].getDetail_1_TodoEditText();
+                                            tempDetail.setDetail1(tempStr);
+                                            tempStr = myTodoListView[tempFinal].getDetail_2_TodoEditText();
+                                            tempDetail.setDetail2(tempStr);
+                                            tempStr = myTodoListView[tempFinal].getDetail_3_TodoEditText();
+                                            tempDetail.setDetail3(tempStr);
+                                            Log.d("jinwoo/d", "확인 첫번째" + tempDetail.getDetail1() + tempDetail.getDetail2() + tempDetail.getDetail3());
+                                            db.collection(projectName).document("Progress").collection("TotalProgress").document(saving_String).set(tempDetail);
+                                        }
+                                    });
+                                    //삭제부분
+                                    if (!saved_String.equals(saving_String)) {
+                                        db.collection(projectName).document("Progress").
+                                                collection("TotalProgress").document(saved_String).
+                                                delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("jinwoo/", "문서 삭제 성공");
+                                            }
+                                        })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("jinwoo/", "문서 삭제 실패", e);
+                                                    }
+                                                });
+                                    }
+
                                 }
-                                String temp = list.stream().collect(Collectors.joining("@"));
-                                myTodoList.setCountedStr(temp);
-                                db.collection(projectName).document("Progress").
-                                        collection("TotalProgress").document("TotalList").
-                                        set(myTodoList);
                             }
                         });
                         //삭제부분 클릭이벤트 DB에 반영 다이얼로그 띄운뒤 확인이 들어왔을때
@@ -189,6 +268,7 @@ public class ProjectManagementActivity extends AppCompatActivity {
                                 builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int which) {
+                                        //DB에서 진행도부분 삭제
                                         int tmp = tempCnt;
                                         for (int i = 0; i < list.size(); i++) {
                                             if (list.get(i).equals(deleteString)) {
@@ -202,6 +282,21 @@ public class ProjectManagementActivity extends AppCompatActivity {
                                         db.collection(projectName).document("Progress").
                                                 collection("TotalProgress").document("TotalList").
                                                 set(myTodoList);
+                                        //DB에서 세부 진행도 삭제
+                                        db.collection(projectName).document("Progress").
+                                                collection("TotalProgress").document(deleteString).
+                                                delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("jinwoo/", "DocumentSnapshot successfully deleted!");
+                                            }
+                                        })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("jinwoo/", "Error deleting document", e);
+                                                    }
+                                                });
                                     }
                                 });
                                 builder.setNegativeButton("취소", null);
@@ -227,7 +322,6 @@ public class ProjectManagementActivity extends AppCompatActivity {
 
                         //진행도 추가부분 Title 이 입력이 안되었을때
                         if (addTodoListView.validTotalTodo()) {
-                            Log.d("jinwoo/", "입력이 없음");
                             Toast toast = Toast.makeText(getApplicationContext(), "추가할 목표의 Title을 입력해 주세요.", Toast.LENGTH_SHORT);
                             toast.show();
                         } else {

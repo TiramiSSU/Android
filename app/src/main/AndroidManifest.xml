@@ -12,86 +12,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TimetableActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".EditActivity" />
-        <activity android:name=".authentication.AuthActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".cloudstorage.FileListActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".cloudstorage.MetaInfoActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".cloudstorage.UploadActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".cloudstorage.DownloadActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".cloudstorage.CloudStorageActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".authentication.SignedInActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".ProjectListAddActivity" />
-        <activity android:name=".TimetableMainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.TIMETABLE" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".TimetableResultActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".ProjectListActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".ProjectManagementActivity" />
+        <activity android:name=".TimetableActivity"></activity>
+        <activity android:name=".EditActivity"></activity>
+        <activity android:name=".authentication.AuthActivity"
+            android:noHistory="true"></activity>
+        <activity android:name=".cloudstorage.FileListActivity"></activity>
+        <activity android:name=".cloudstorage.MetaInfoActivity"></activity>
+        <activity android:name=".cloudstorage.UploadActivity"></activity>
+        <activity android:name=".cloudstorage.DownloadActivity"></activity>
+        <activity android:name=".cloudstorage.CloudStorageActivity"></activity>
+        <activity
+            android:name=".authentication.SignedInActivity"
+            android:noHistory="true"></activity>
+        <activity android:name=".ProjectListAddActivity"></activity>
+        <activity android:name=".TimetableMainActivity"></activity>
+        <activity android:name=".TimetableResultActivity"></activity>
+        <activity android:name=".ProjectListActivity"></activity>
+        <activity android:name=".ProjectManagementActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

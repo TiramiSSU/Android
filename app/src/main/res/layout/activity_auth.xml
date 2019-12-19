@@ -23,17 +23,18 @@
         android:layout_marginTop="10dp"
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"
-        android:text="Firebase Authentication"
+        android:text="구글 로그인!"
         app:layout_constraintTop_toBottomOf="@id/topimg"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <Button
+    <com.google.android.gms.common.SignInButton
         android:id="@+id/firebaseuiauthbtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="인증"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
         app:layout_constraintTop_toBottomOf="@id/titletxt"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
@@ -44,7 +45,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/firebaseuiauthbtn"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone">
 
         <CheckBox
             android:id="@+id/google_provider"
@@ -57,13 +59,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/firebasesignout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="로그아웃"
-        app:layout_constraintTop_toBottomOf="@id/firebaseuilayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

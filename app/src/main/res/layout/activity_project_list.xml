@@ -6,22 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".ProjectListActivity">
 
+    <Button
+        android:id="@+id/signOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="로그아웃"/>
+
     <TextView
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_below="@+id/signOut"
+        android:layout_marginStart="30dp"
         android:textColor="#000000"
         android:id="@+id/userName"
         android:hint="UserId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:textColor="#000000"
-        android:id="@+id/userEmail"
-        android:hint="UserEmail"
-        android:layout_below="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -33,13 +30,22 @@
         android:layout_margin="20dp"
         android:text="프로젝트 초대"/>
 
+    <Button
+        android:id="@+id/view_timetable_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/invited_project_btn"
+        android:layout_alignEnd="@id/invited_project_btn"
+        android:layout_alignStart="@id/invited_project_btn"
+        android:text="시간표 관리"
+        android:textColor="#000000" />
+
 <!--    참여중인 프로젝트 리스트-->
     <HorizontalScrollView
         android:id="@+id/ProjectListHorizenScroll"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="70dp">
+        android:layout_centerVertical="true">
 
 <!--        버튼은 모두 동적으로 배당-->
         <LinearLayout

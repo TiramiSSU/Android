@@ -5,12 +5,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.ssuapp.ProjectListActivity;
 import com.example.ssuapp.R;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -49,6 +51,7 @@ public class SignedInActivity extends AppCompatActivity implements View.OnClickL
 
         Button deleteuser = (Button)findViewById(R.id.delete_account);
         deleteuser.setOnClickListener(this);
+
     }
 
     @Override

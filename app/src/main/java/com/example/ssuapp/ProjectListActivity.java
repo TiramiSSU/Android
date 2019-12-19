@@ -15,8 +15,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.ssuapp.authentication.AuthActivity;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -33,7 +37,6 @@ public class ProjectListActivity extends AppCompatActivity {
 
     //유저 아이디 부분
     TextView userNameTextView;
-    TextView userEmailTextView;
 
     DBUserInformation userInformation;
     String userid;
@@ -46,14 +49,49 @@ public class ProjectListActivity extends AppCompatActivity {
     String changeStr;
     int cnt;
 
+    Button signOutBtn;
+    Button timetableBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_list);
 
+        signOutBtn = findViewById(R.id.signOut);
+        signOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AuthUI.getInstance()
+                        .signOut(ProjectListActivity.this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>()
+                        {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task)
+                            {
+                                if (task.isSuccessful())
+                                {
+                                    Intent intent = new Intent(ProjectListActivity.this, AuthActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+                                else
+                                {
+                                }
+                            }
+                        });
+            }
+        });
+        timetableBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProjectListActivity.this, TimetableActivity.class);
+                startActivity(intent);
+            }
+        });
+
         FirebaseUser curUser = FirebaseAuth.getInstance().getCurrentUser();
         userNameTextView = findViewById(R.id.userName);
-        userEmailTextView = findViewById(R.id.userEmail);
         if (curUser != null) {
             for (UserInfo profile : curUser.getProviderData()) {
                 if (!profile.getUid().equals(""))
@@ -65,8 +103,6 @@ public class ProjectListActivity extends AppCompatActivity {
 
                 if (!username.equals(""))
                     userNameTextView.setText(username);
-                if (!useremail.equals(""))
-                    userEmailTextView.setText(useremail);
             }
         }
 
@@ -246,4 +282,8 @@ public class ProjectListActivity extends AppCompatActivity {
 
         super.onResume();
     }
+
+
+    //로그인 화면 전환용
+
 }

@@ -109,6 +109,7 @@ public class TimetableActivity extends AppCompatActivity implements View.OnClick
                 }
                 break;
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**

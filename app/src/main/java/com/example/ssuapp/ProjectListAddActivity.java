@@ -12,6 +12,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -24,12 +27,23 @@ import java.util.Map;
 public class ProjectListAddActivity extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
-    final String userid = "iw2swiambfs";
+    //    final String userid = "iw2swiambfs";
+    String userid;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_list_add);
+
+        FirebaseUser curUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (curUser != null) {
+            for (UserInfo profile : curUser.getProviderData()) {
+                userid = profile.getUid();
+                if (profile.getDisplayName() != "")
+                    username = profile.getDisplayName();
+            }
+        }
     }
 
     //저장버튼 클릭
@@ -43,22 +57,18 @@ public class ProjectListAddActivity extends AppCompatActivity {
         final String projectName = editText.getText().toString().trim();
         //프로젝트 이름 입력칸이 비어있을때
         if (projectName.length() == 0) {
-            Log.d("jinwoo/", "프로젝트 이름칸이 비어있음");
             Toast myToast = Toast.makeText(this.getApplicationContext(), "프로젝트 이름을 입력해주세요", Toast.LENGTH_SHORT);
             myToast.show();
         } else if (projectName.contains("@")) {
-            Log.d("jinwoo/", "프로젝트 이름에 '@' 가 존재합니다.");
             Toast myToast = Toast.makeText(this.getApplicationContext(), "@  은 사용 불가능한 문자입니다.", Toast.LENGTH_SHORT);
             myToast.show();
         }
         //프로젝트 이름 입력이 되어있을때
         //데이터 베이스에 추가해줌
         else {
-            Log.d("jinwoo/", "프로젝트 이름 =" + projectName);
-
             //DB에 projectName을 가진 새 컬렉션 만들기
-            Map<String, Object> myUId = new HashMap<>();
-            myUId.put(userid, "박진우");
+            Map<String, String> myUId = new HashMap<>();
+            myUId.put(userid, username);
             db.collection(projectName).document("Progress")
                     .set(myUId)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -94,8 +104,7 @@ public class ProjectListAddActivity extends AppCompatActivity {
                         userInfo.setProjectcnt(cnt);
                         userInfo.setProjectlist(projectlist);
                         //이부분은 나중에 각자의 이름으로 바꿔야하나 지금은 개인으로 사용중
-                        userInfo.setName("박진우");
-                        Log.d("jinwoo/", "DB에 추가할 내용 cnt" + userInfo.getProjectcnt() + "리스트" + userInfo.getProjectlist());
+                        userInfo.setName(username);
                         db.collection("UserID").document(userid).set(userInfo);
                     }
                     //추가할게 1개이상일 때
@@ -106,8 +115,7 @@ public class ProjectListAddActivity extends AppCompatActivity {
                         projectlist = projectlist.concat("@" + projectName);
                         userInfo.setProjectcnt(cnt);
                         userInfo.setProjectlist(projectlist);
-                        userInfo.setName("박진우");
-                        Log.d("jinwoo/", "DB에 추가할 내용 cnt" + userInfo.getProjectcnt() + "리스트" + userInfo.getProjectlist());
+                        userInfo.setName(username);
                         db.collection("UserID").document(userid).set(userInfo);
                     }
                 }

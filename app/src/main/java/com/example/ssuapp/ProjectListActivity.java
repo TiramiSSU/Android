@@ -25,14 +25,15 @@ import com.google.firebase.firestore.MetadataChanges;
 
 public class ProjectListActivity extends AppCompatActivity {
 
-    private static final int RC_SIGN_IN = 007;
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
-    final String userid = "iw2swiambfs";
+//    final String userid = "iw2swiambfs";
 
     //유저 아이디 부분
     TextView userName;
     TextView userEmail;
     TextView userId;
+
+    String userid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class ProjectListActivity extends AppCompatActivity {
         if (curUser != null) {
             for (UserInfo profile : curUser.getProviderData()) {
                 String providerID = profile.getProviderId();
-                String uid = profile.getUid();
+                userid = profile.getUid();
 
                 name = profile.getDisplayName();
                 String email = profile.getEmail();
@@ -57,8 +58,8 @@ public class ProjectListActivity extends AppCompatActivity {
                     userName.setText(name);
                 if (email != "")
                     userEmail.setText(email);
-                if (uid != "")
-                    userId.setText(uid);
+                if (userid != "")
+                    userId.setText(userid);
             }
         }
     }

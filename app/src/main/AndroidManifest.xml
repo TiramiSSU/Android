@@ -77,7 +77,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ProjectListAddActivity" />
-        <activity android:name=".ProjectAimAddActivity" />
         <activity android:name=".TimetableMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.TIMETABLE" />

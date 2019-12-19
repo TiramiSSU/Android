@@ -16,6 +16,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -30,12 +33,13 @@ import java.util.stream.Collectors;
 
 public class ProjectManagementActivity extends AppCompatActivity {
 
-    final String userid = "iw2swiambfs";
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
     AlertDialog myProjectDeleteDialog;  //프로젝트 삭제 다이얼로그
     AlertDialog myProjectJoinedPeopleDialog; //프로젝트 참여자 다이얼로그
     String projectName;
 
+    String userid;
+    String username;
 
     @Override
     protected void onCreate(Bundle saveInstanceState) {
@@ -45,9 +49,16 @@ public class ProjectManagementActivity extends AppCompatActivity {
         //Intent 로 프로젝트 이름 받아오기
         Intent intent = getIntent();
         projectName = intent.getExtras().getString("ProjectName");
-        Log.d("jinwoo/", "받은 이름: " + projectName);
 
         db.collection(projectName).document("Progress");
+
+        FirebaseUser curUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(curUser != null){
+            for(UserInfo profile:curUser.getProviderData()){
+                userid = profile.getUid();
+                username = profile.getDisplayName();
+            }
+        }
 
     }
 
@@ -77,7 +88,6 @@ public class ProjectManagementActivity extends AppCompatActivity {
         public void onClick(DialogInterface dialog, int which) {
             //프로젝트 삭제 다이얼로그
             if (dialog == myProjectDeleteDialog) {
-                Log.d("jinwoo/", projectName + "프로젝트 삭제버튼 클릭");
                 DocumentReference docRef = db.collection("UserID").document(userid);
                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -89,7 +99,6 @@ public class ProjectManagementActivity extends AppCompatActivity {
                         cnt = userInfo.getProjectcnt();
                         //삭제할 프로젝트가 없을때 예외처리
                         if (cnt == 0) {
-                            Log.d("jinwoo/", "프로젝트 0개일때 삭제");
                         }
                         //삭제할 프로젝트가 1개일때
                         else if (cnt == 1) {
@@ -99,11 +108,10 @@ public class ProjectManagementActivity extends AppCompatActivity {
                             projectlist = "";
                             userInfo.setProjectlist(projectlist);
                             db.collection("UserID").document(userid).set(userInfo);
-                            Log.d("jinwoo/", "프로젝트 1개일때 삭제");
                         }
                         //그외의 경우
                         else {
-                            //구분자를 활용하여 '/'  String 을 사용 관리하여 가지고있는 프로젝트 리스트 관리
+                            //구분자를 활용하여 '@'  String 을 사용 관리하여 가지고있는 프로젝트 리스트 관리
                             cnt--;
                             userInfo.setProjectcnt(cnt);
                             eachProject = documentSnapshot.getString("projectlist").split("@");
@@ -112,7 +120,6 @@ public class ProjectManagementActivity extends AppCompatActivity {
                             projectlist = list.stream().collect(Collectors.joining("@"));
                             userInfo.setProjectlist(projectlist);
                             db.collection("UserID").document(userid).set(userInfo);
-                            Log.d("jinwoo/", "프로젝트 2개이상일때 삭제");
                         }
                     }
                 });
@@ -143,7 +150,6 @@ public class ProjectManagementActivity extends AppCompatActivity {
 
                 //DB에서 전체 진행도 과정 받기
                 final DBTodoList myTodoList = documentSnapshot.toObject(DBTodoList.class);
-
 
                 //진행도 Custom View로 그리기
                 String arr[] = myTodoList.getCountedStr().split("@");
@@ -230,7 +236,6 @@ public class ProjectManagementActivity extends AppCompatActivity {
                                             tempDetail.setDetail2(tempStr);
                                             tempStr = myTodoListView[tempFinal].getDetail_3_TodoEditText();
                                             tempDetail.setDetail3(tempStr);
-                                            Log.d("jinwoo/d", "확인 첫번째" + tempDetail.getDetail1() + tempDetail.getDetail2() + tempDetail.getDetail3());
                                             db.collection(projectName).document("Progress").collection("TotalProgress").document(saving_String).set(tempDetail);
                                         }
                                     });

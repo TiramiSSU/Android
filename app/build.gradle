@@ -47,5 +47,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-storage:1.2.0'
     implementation 'com.google.firebase:firebase-database:19.2.0'
 
+    //TimeTable module github
+    implementation 'com.github.tlaabs:TimetableView:1.0.3-fx1'
 
 }

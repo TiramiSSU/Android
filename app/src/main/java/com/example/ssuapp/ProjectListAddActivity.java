@@ -27,7 +27,6 @@ import java.util.Map;
 public class ProjectListAddActivity extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
-    //    final String userid = "iw2swiambfs";
     String userid;
     String username;
 

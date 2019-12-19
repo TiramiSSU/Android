@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,7 +25,6 @@ import com.google.firebase.firestore.MetadataChanges;
 public class ProjectListActivity extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 db 접근
-//    final String userid = "iw2swiambfs";
 
     //유저 아이디 부분
     TextView userName;

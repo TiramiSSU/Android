@@ -38,13 +38,11 @@ public class MainActivity extends AppCompatActivity {
         //로그인 되었을때 바로 관리 화면으로
         if(user != null){
             Intent intent = new Intent(this, ProjectListActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
         }
         //로그인 안되었을때 로그인 후 관리화면으로
         else{
             Intent intent = new Intent(this, AuthActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
         }
     }

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,16 @@ import android.widget.TextView;
 
 import com.example.ssuapp.authentication.AuthActivity;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GithubAuthProvider;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -63,25 +68,22 @@ public class ProjectListActivity extends AppCompatActivity {
             public void onClick(View view) {
                 AuthUI.getInstance()
                         .signOut(ProjectListActivity.this)
-                        .addOnCompleteListener(new OnCompleteListener<Void>()
-                        {
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task)
-                            {
-                                if (task.isSuccessful())
-                                {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
                                     Intent intent = new Intent(ProjectListActivity.this, AuthActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
-                                }
-                                else
-                                {
+                                } else {
                                 }
                             }
                         });
             }
         });
+
+        timetableBtn = findViewById(R.id.view_timetable_btn);
         timetableBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -282,8 +284,4 @@ public class ProjectListActivity extends AppCompatActivity {
 
         super.onResume();
     }
-
-
-    //로그인 화면 전환용
-
 }

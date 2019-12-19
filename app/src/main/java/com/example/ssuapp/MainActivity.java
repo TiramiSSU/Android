@@ -42,8 +42,6 @@ public class MainActivity extends AppCompatActivity {
         }
         //로그인 안되었을때 로그인 후 관리화면으로
         else{
-            Intent intent = new Intent(this, MyLoginActivity.class);
-            startActivity(intent);
         }
     }
 }
